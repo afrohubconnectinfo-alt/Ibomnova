@@ -21,7 +21,7 @@ export default async function handler(req, res) {
   try {
     const isGroq = !!process.env.GROQ_API_KEY;
     const url = isGroq ? "https://api.groq.com/openai/v1/chat/completions" : "https://api.openai.com/v1/chat/completions";
-    const model = isGroq ? "llama-3.1-8b-instant" : "gpt-4o-mini";
+    const model = isGroq ? "llama-3.3-70b-versatile" : "gpt-4o-mini";
     const response = await fetch(url, {
       method: "POST",
       headers: { "Content-Type": "application/json", "Authorization": `Bearer ${apiKey}` },
