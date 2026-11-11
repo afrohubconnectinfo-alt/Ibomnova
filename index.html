@@ -4,28 +4,33 @@
 <title>Ibomnova - Chat</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
-body{font-family:Arial;background:#0f0f0f;color:white;margin:0;display:flex;flex-direction:column;height:100vh}
-.header{background:#1e1e1e;padding:12px 15px;display:flex;justify-content:space-between;align-items:center}
-.header h3{margin:0;font-size:16px}
-.header span{font-size:12px;color:#aaa}
-.chat{flex:1;overflow-y:auto;padding:15px;display:flex;flex-direction:column;gap:10px}
-.msg{padding:12px 15px;border-radius:12px;max-width:85%;word-wrap:break-word;font-size:14px;line-height:1.4}
-.user{background:#7c3aed;align-self:flex-end}
-.ai{background:#1e1e1e;align-self:flex-start;border:1px solid #2a2a2a}
-.input-area{background:#1e1e1e;padding:12px;display:flex;gap:8px;align-items:center}
-input{flex:1;padding:12px;border-radius:20px;border:none;background:#2a2a2a;color:white;outline:none}
-button{padding:10px 18px;background:#7c3aed;color:white;border:none;border-radius:20px;cursor:pointer;font-weight:bold}
-.small{padding:6px 12px;font-size:12px;background:#333}
+body{font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Arial;background:#0f0f0f;color:white;margin:0;display:flex;flex-direction:column;height:100vh}
+.header{background:#171717;padding:12px 15px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #222}
+.chat{flex:1;overflow-y:auto;padding:15px;display:flex;flex-direction:column;gap:16px}
+.row{display:flex;flex-direction:column;max-width:85%}
+.row.user{align-self:flex-end}
+.row.ai{align-self:flex-start;width:100%;max-width:92%}
+.bubble{padding:12px 15px;border-radius:18px;font-size:14px;line-height:1.5;white-space:pre-wrap;word-wrap:break-word}
+.user .bubble{background:#7c3aed;border-bottom-right-radius:4px}
+.ai .bubble{background:#1e1e1e;border:1px solid #2a2a2a;border-bottom-left-radius:4px}
+.actions{margin-top:6px;display:flex;gap:8px}
+.copyBtn{font-size:11px;background:#2a2a2a;color:#aaa;border:1px solid #333;padding:4px 8px;border-radius:12px;cursor:pointer}
+.copyBtn:hover{background:#333;color:white}
+.input-area{background:#171717;padding:12px;display:flex;gap:8px;border-top:1px solid #222}
+input{flex:1;padding:13px 16px;border-radius:24px;border:none;background:#2a2a2a;color:white;outline:none}
+button#send{padding:12px 20px;background:#7c3aed;color:white;border:none;border-radius:24px;cursor:pointer;font-weight:bold}
+.small{font-size:12px;background:#2a2a2a;padding:6px 12px;border-radius:16px;border:1px solid #333;color:white;cursor:pointer}
+b{color:white}
 </style>
 </head>
 <body>
 <div class="header">
-<div><h3>Ibomnova AI</h3><span id="userEmail">loading...</span></div>
-<div><button class="small" id="clearBtn">Clear</button> <button class="small" id="logout">Logout</button></div>
+<b>Ibomnova AI</b>
+<div><button class="small" id="clearBtn">New chat</button> <button class="small" id="logout">Logout</button></div>
 </div>
 <div class="chat" id="chat"></div>
 <div class="input-area">
-<input type="text" id="input" placeholder="Ask anything...">
+<input type="text" id="input" placeholder="Ask about Uyo, Akwa Ibom...">
 <button id="send">Send</button>
 </div>
 <script type="module">
@@ -43,55 +48,53 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const chatEl = document.getElementById("chat");
 let history = JSON.parse(localStorage.getItem("ibom_chat") || "[]");
-let currentUser = null;
 
+function formatText(text){
+  let t = text;
+  t = t.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
+  t = t.replace(/\n/g, '<br>');
+  return t;
+}
 function render(){
-  chatEl.innerHTML = history.length ? "" : '<div class="msg ai">Hello! I\'m Ibomnova AI. How can I help you today?</div>';
-  history.forEach(m=>{
-    chatEl.innerHTML += `<div class="msg ${m.role==='user'?'user':'ai'}">${m.text}</div>`;
+  chatEl.innerHTML = "";
+  if(history.length===0){
+    chatEl.innerHTML = '<div class="row ai"><div class="bubble">Hello! I\'m Ibomnova AI. How can I help you today?</div></div>';
+    return;
+  }
+  history.forEach((m,i)=>{
+    const row = document.createElement("div");
+    row.className = `row ${m.role==='user'?'user':'ai'}`;
+    const bubble = document.createElement("div");
+    bubble.className = "bubble";
+    bubble.innerHTML = m.role==='user' ? m.text.replace(/</g,'&lt;') : formatText(m.text);
+    row.appendChild(bubble);
+    if(m.role==='ai'){
+      const actions = document.createElement("div");
+      actions.className = "actions";
+      const copy = document.createElement("button");
+      copy.className = "copyBtn"; copy.textContent="📋 Copy";
+      copy.onclick = ()=>{ navigator.clipboard.writeText(m.text); copy.textContent="✅ Copied!"; setTimeout(()=>copy.textContent="📋 Copy",1500); };
+      actions.appendChild(copy);
+      row.appendChild(actions);
+    }
+    chatEl.appendChild(row);
   });
   chatEl.scrollTop = chatEl.scrollHeight;
 }
 render();
-
-onAuthStateChanged(auth, (user)=>{
-  if(!user){ window.location.href = "login.html"; return; }
-  currentUser = user;
-  document.getElementById("userEmail").textContent = user.email;
-});
-
-document.getElementById("logout").onclick = ()=>{ signOut(auth).then(()=>{ localStorage.removeItem("ibom_chat"); window.location.href="login.html"; }); };
+onAuthStateChanged(auth, (user)=>{ if(!user) window.location.href="login.html"; });
+document.getElementById("logout").onclick = ()=>{ signOut(auth).then(()=>{ window.location.href="login.html"; }); };
 document.getElementById("clearBtn").onclick = ()=>{ history=[]; localStorage.removeItem("ibom_chat"); render(); };
-
 async function send(){
   const input = document.getElementById("input");
-  const text = input.value.trim();
-  if(!text) return;
-  history.push({role:"user", text});
-  localStorage.setItem("ibom_chat", JSON.stringify(history));
-  render();
-  input.value = "";
-  const thinking = document.createElement("div");
-  thinking.className = "msg ai"; thinking.textContent = "Thinking..."; thinking.id="thinking";
-  chatEl.appendChild(thinking);
-  chatEl.scrollTop = chatEl.scrollHeight;
+  const text = input.value.trim(); if(!text) return;
+  history.push({role:"user", text}); localStorage.setItem("ibom_chat", JSON.stringify(history)); render(); input.value="";
+  const row = document.createElement("div"); row.className="row ai"; row.innerHTML='<div class="bubble">Thinking...</div>'; chatEl.appendChild(row); chatEl.scrollTop=chatEl.scrollHeight;
   try{
-    const res = await fetch("/api/chat", {
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body: JSON.stringify({message:text, history: history.slice(-10)})
-    });
-    const data = await res.json();
-    document.getElementById("thinking")?.remove();
-    const reply = data.reply || data.error || "No response";
-    history.push({role:"ai", text:reply});
-    localStorage.setItem("ibom_chat", JSON.stringify(history));
-    render();
-  }catch(e){
-    document.getElementById("thinking")?.remove();
-    history.push({role:"ai", text:"Error: "+e.message});
-    render();
-  }
+    const res = await fetch("/api/chat", {method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({message:text, history: history.slice(-10)})});
+    const data = await res.json(); row.remove();
+    history.push({role:"ai", text: data.reply || data.error || "No response"}); localStorage.setItem("ibom_chat", JSON.stringify(history)); render();
+  }catch(e){ row.remove(); history.push({role:"ai", text:"Error: "+e.message}); render(); }
 }
 document.getElementById("send").onclick = send;
 document.getElementById("input").addEventListener("keypress",(e)=>{ if(e.key==="Enter") send(); });
