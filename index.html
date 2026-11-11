@@ -5,27 +5,27 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
 body{font-family:Arial;background:#0f0f0f;color:white;margin:0;display:flex;flex-direction:column;height:100vh}
-.header{background:#1e1e1e;padding:15px;display:flex;justify-content:space-between;align-items:center}
-.chat{flex:1;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:10px}
-.msg{padding:12px 15px;border-radius:12px;max-width:80%}
+.header{background:#1e1e1e;padding:12px 15px;display:flex;justify-content:space-between;align-items:center}
+.header h3{margin:0;font-size:16px}
+.header span{font-size:12px;color:#aaa}
+.chat{flex:1;overflow-y:auto;padding:15px;display:flex;flex-direction:column;gap:10px}
+.msg{padding:12px 15px;border-radius:12px;max-width:85%;word-wrap:break-word;font-size:14px;line-height:1.4}
 .user{background:#7c3aed;align-self:flex-end}
-.ai{background:#1e1e1e;align-self:flex-start}
-.input-area{background:#1e1e1e;padding:15px;display:flex;gap:10px}
-input{flex:1;padding:12px;border-radius:8px;border:none}
-button{padding:12px 20px;background:#7c3aed;color:white;border:none;border-radius:8px;cursor:pointer;font-weight:bold}
-#logout{background:#333}
+.ai{background:#1e1e1e;align-self:flex-start;border:1px solid #2a2a2a}
+.input-area{background:#1e1e1e;padding:12px;display:flex;gap:8px;align-items:center}
+input{flex:1;padding:12px;border-radius:20px;border:none;background:#2a2a2a;color:white;outline:none}
+button{padding:10px 18px;background:#7c3aed;color:white;border:none;border-radius:20px;cursor:pointer;font-weight:bold}
+.small{padding:6px 12px;font-size:12px;background:#333}
 </style>
 </head>
 <body>
 <div class="header">
-<h3>Ibomnova AI</h3>
-<button id="logout">Logout</button>
+<div><h3>Ibomnova AI</h3><span id="userEmail">loading...</span></div>
+<div><button class="small" id="clearBtn">Clear</button> <button class="small" id="logout">Logout</button></div>
 </div>
-<div class="chat" id="chat">
-<div class="msg ai">Hello! I'm Ibomnova AI. How can I help you today?</div>
-</div>
+<div class="chat" id="chat"></div>
 <div class="input-area">
-<input type="text" id="input" placeholder="Type message...">
+<input type="text" id="input" placeholder="Ask anything...">
 <button id="send">Send</button>
 </div>
 <script type="module">
@@ -41,36 +41,57 @@ const firebaseConfig = {
 };
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+const chatEl = document.getElementById("chat");
+let history = JSON.parse(localStorage.getItem("ibom_chat") || "[]");
+let currentUser = null;
+
+function render(){
+  chatEl.innerHTML = history.length ? "" : '<div class="msg ai">Hello! I\'m Ibomnova AI. How can I help you today?</div>';
+  history.forEach(m=>{
+    chatEl.innerHTML += `<div class="msg ${m.role==='user'?'user':'ai'}">${m.text}</div>`;
+  });
+  chatEl.scrollTop = chatEl.scrollHeight;
+}
+render();
 
 onAuthStateChanged(auth, (user)=>{
-  if(!user){ window.location.href = "login.html"; }
+  if(!user){ window.location.href = "login.html"; return; }
+  currentUser = user;
+  document.getElementById("userEmail").textContent = user.email;
 });
 
-document.getElementById("logout").onclick = ()=>{ signOut(auth).then(()=>window.location.href="login.html"); };
+document.getElementById("logout").onclick = ()=>{ signOut(auth).then(()=>{ localStorage.removeItem("ibom_chat"); window.location.href="login.html"; }); };
+document.getElementById("clearBtn").onclick = ()=>{ history=[]; localStorage.removeItem("ibom_chat"); render(); };
 
 async function send(){
   const input = document.getElementById("input");
-  const chat = document.getElementById("chat");
   const text = input.value.trim();
   if(!text) return;
-  chat.innerHTML += `<div class="msg user">${text}</div>`;
+  history.push({role:"user", text});
+  localStorage.setItem("ibom_chat", JSON.stringify(history));
+  render();
   input.value = "";
-  chat.scrollTop = chat.scrollHeight;
-  chat.innerHTML += `<div class="msg ai" id="temp">Thinking...</div>`;
+  const thinking = document.createElement("div");
+  thinking.className = "msg ai"; thinking.textContent = "Thinking..."; thinking.id="thinking";
+  chatEl.appendChild(thinking);
+  chatEl.scrollTop = chatEl.scrollHeight;
   try{
     const res = await fetch("/api/chat", {
       method:"POST",
       headers:{"Content-Type":"application/json"},
-      body: JSON.stringify({message:text})
+      body: JSON.stringify({message:text, history: history.slice(-10)})
     });
     const data = await res.json();
-    document.getElementById("temp").remove();
-    chat.innerHTML += `<div class="msg ai">${data.reply || data.error || "No reply"}</div>`;
+    document.getElementById("thinking")?.remove();
+    const reply = data.reply || data.error || "No response";
+    history.push({role:"ai", text:reply});
+    localStorage.setItem("ibom_chat", JSON.stringify(history));
+    render();
   }catch(e){
-    document.getElementById("temp").remove();
-    chat.innerHTML += `<div class="msg ai">Error: ${e.message}</div>`;
+    document.getElementById("thinking")?.remove();
+    history.push({role:"ai", text:"Error: "+e.message});
+    render();
   }
-  chat.scrollTop = chat.scrollHeight;
 }
 document.getElementById("send").onclick = send;
 document.getElementById("input").addEventListener("keypress",(e)=>{ if(e.key==="Enter") send(); });
