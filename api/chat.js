@@ -3,7 +3,6 @@ export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-  
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
   
@@ -16,11 +15,12 @@ export default async function handler(req, res) {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEY}` },
       body: JSON.stringify({
-        model: 'llama-3.1-8b-instant',
+        model: 'openai/gpt-oss-20b',
         messages: [
-          { role: 'system', content: `You are Ibomnova. Type: ${type || 'general'}` },
+          { role: 'system', content: `You are Ibomnova, a friendly helpful AI assistant. Type: ${type || 'general'}` },
           { role: 'user', content: message }
-        ]
+        ],
+        max_tokens: 1024
       })
     });
     const data = await response.json();
