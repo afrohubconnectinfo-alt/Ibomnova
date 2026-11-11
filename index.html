@@ -23,7 +23,7 @@ button#send{padding:12px 20px;background:#7c3aed;color:white;border:none;border-
 <body>
 <div class="header"><b>IBOMNOVA</b><div><button class="small" id="clearBtn">New chat</button> <button class="small" id="logout">Logout</button></div></div>
 <div class="chat" id="chat"></div>
-<div class="input-area"><input id="input" placeholder="Ask about Uyo..."><button id="send">Send</button></div>
+<div class="input-area"><input id="input" placeholder="Ask anything... house plan, business, etc"><button id="send">Send</button></div>
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
@@ -32,61 +32,43 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const chatEl = document.getElementById("chat");
 let history = JSON.parse(localStorage.getItem("ibom_chat") || "[]");
-
 function formatText(text){
   let t = text;
-  // REMOVE table junk like | Era | and |---|
-  t = t.split('\n').filter(l=>{
-    const trimmed = l.trim();
-    if(trimmed.includes('|---|')) return false;
-    if(trimmed.startsWith('|') && trimmed.endsWith('|') && trimmed.split('|').length>3) return false;
-    return true;
-  }).join('\n');
-  // REMOVE > and > * at start
-  t = t.replace(/^>\s*\*?/gm, '').replace(/^\*\s+/gm, '• ');
-  // REMOVE single *star* -> keep text only
-  t = t.replace(/(^|[^*])\*([^*\n]+)\*([^*]|$)/g, '$1$2$3');
-  // Bold **text**
-  t = t.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
-  t = t.replace(/\n/g, '<br>');
+  t = t.split('\n').filter(l=>{ const tr=l.trim(); if(tr.includes('|---|')) return false; if(tr.startsWith('|')&&tr.endsWith('|')&&tr.split('|').length>3) return false; return true; }).join('\n');
+  t = t.replace(/^>\s*\*?/gm,'').replace(/^\*\s+/gm,'• ');
+  t = t.replace(/(^|[^*])\*([^*\n]+)\*([^*]|$)/g,'$1$2$3');
+  t = t.replace(/\*\*(.*?)\*\*/g,'<b>$1</b>');
+  t = t.replace(/\n/g,'<br>');
   return t;
 }
-
 function render(){
-  chatEl.innerHTML = history.length ? "" : '<div class="row ai"><div class="bubble">Hello! I\'m Ibomnova AI. How can I help you today?</div></div>';
+  chatEl.innerHTML = history.length ? "" : '<div class="row ai"><div class="bubble">Hello! I am Ibomnova AI. Ask me anything - house plans, business, coding, languages, etc.</div></div>';
   history.forEach(m=>{
-    const row = document.createElement("div");
-    row.className = `row ${m.role}`;
-    const bubble = document.createElement("div");
-    bubble.className = "bubble";
-    bubble.innerHTML = m.role==='user' ? m.text.replace(/</g,'&lt;') : formatText(m.text);
+    const row=document.createElement("div"); row.className=`row ${m.role}`;
+    const bubble=document.createElement("div"); bubble.className="bubble";
+    bubble.innerHTML=m.role==='user'?m.text.replace(/</g,'&lt;'):formatText(m.text);
     row.appendChild(bubble);
-    if(m.role==='ai'){
-      const act = document.createElement("div"); act.className="actions";
-      const c = document.createElement("button"); c.className="copyBtn"; c.textContent="📋 Copy";
-      c.onclick=()=>{navigator.clipboard.writeText(m.text); c.textContent="✅ Copied"; setTimeout(()=>c.textContent="📋 Copy",1500)};
-      act.appendChild(c); row.appendChild(act);
-    }
+    if(m.role==='ai'){ const act=document.createElement("div"); act.className="actions"; const c=document.createElement("button"); c.className="copyBtn"; c.textContent="📋 Copy"; c.onclick=()=>{navigator.clipboard.writeText(m.text); c.textContent="✅ Copied"; setTimeout(()=>c.textContent="📋 Copy",1500)}; act.appendChild(c); row.appendChild(act); }
     chatEl.appendChild(row);
   });
-  chatEl.scrollTop = chatEl.scrollHeight;
+  chatEl.scrollTop=chatEl.scrollHeight;
 }
 render();
-onAuthStateChanged(auth, u=>{ if(!u) location.href="login.html"; });
+onAuthStateChanged(auth,u=>{if(!u) location.href="login.html";});
 document.getElementById("logout").onclick=()=>signOut(auth).then(()=>location.href="login.html");
 document.getElementById("clearBtn").onclick=()=>{history=[]; localStorage.removeItem("ibom_chat"); render();};
 async function send(){
   const input=document.getElementById("input"); const text=input.value.trim(); if(!text) return;
-  history.push({role:"user", text}); localStorage.setItem("ibom_chat", JSON.stringify(history)); render(); input.value="";
+  history.push({role:"user",text}); localStorage.setItem("ibom_chat",JSON.stringify(history)); render(); input.value="";
   const temp=document.createElement("div"); temp.className="row ai"; temp.innerHTML='<div class="bubble">Thinking...</div>'; chatEl.appendChild(temp);
   try{
-    const res=await fetch("/api/chat", {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({message:text, history: history.slice(-8)})});
+    const res=await fetch("/api/chat",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({message:text,history:history.slice(-8)})});
     const data=await res.json(); temp.remove();
-    history.push({role:"ai", text:data.reply||data.error}); localStorage.setItem("ibom_chat", JSON.stringify(history)); render();
-  }catch(e){ temp.remove(); history.push({role:"ai", text:"Error: "+e.message}); render(); }
+    history.push({role:"ai",text:data.reply||data.error}); localStorage.setItem("ibom_chat",JSON.stringify(history)); render();
+  }catch(e){ temp.remove(); history.push({role:"ai",text:"Error: "+e.message}); render(); }
 }
 document.getElementById("send").onclick=send;
-document.getElementById("input").addEventListener("keypress", e=>{ if(e.key==="Enter") send(); });
+document.getElementById("input").addEventListener("keypress",e=>{if(e.key==="Enter") send();});
 </script>
 </body>
 </html>
