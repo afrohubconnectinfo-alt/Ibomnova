@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Login - Ibomnova</title>
+<title>Create Account - Ibomnova</title>
 <link rel="icon" href="favicon-32.png">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
@@ -11,30 +11,29 @@ body{font-family:Arial;background:#0a0a0a;color:white;display:flex;justify-conte
 .logo img{height:34px;background:white;padding:4px 12px;border-radius:8px;margin-bottom:16px}
 h2{font-size:24px} .sub{color:#777;font-size:13px;margin:6px 0 18px}
 input{width:100%;padding:13px;border-radius:12px;border:1px solid #333;background:#0f0f0f;color:white;margin-bottom:12px;outline:none}
-input:focus{border-color:#7c3aed}
 .btn{width:100%;padding:13px;border-radius:12px;border:none;background:#7c3aed;color:white;font-weight:bold;cursor:pointer}
-.forgot{display:block;text-align:right;font-size:12px;color:#9d6bff;text-decoration:none;margin:-6px 0 12px;cursor:pointer}
 .links{margin-top:16px;font-size:13px;color:#777} .links a{color:#9d6bff;text-decoration:none;font-weight:bold}
-.msg{font-size:13px;padding:10px;border-radius:10px;display:none;margin-bottom:12px} .error{background:#2a1212;color:#ff6b6b} .success{background:#122a14;color:#4ade80}
+.msg{font-size:13px;padding:10px;border-radius:10px;display:none;margin-bottom:12px} .error{background:#2a1212;color:#ff6b6b}
+#welcome{position:fixed;inset:0;background:rgba(0,0,0,0.92);display:none;align-items:center;justify-content:center;padding:20px;z-index:99}
+.wcard{background:#151515;border:1px solid #333;border-radius:20px;padding:30px;max-width:360px;text-align:center}
 </style>
 </head>
 <body>
 <div class="box">
 <div class="logo"><img src="logo.png"></div>
-<h2>Welcome Back</h2><p class="sub">Login to Ibomnova</p>
-<div id="msg" class="msg"></div>
+<h2>Create Account</h2><p class="sub">Join Ibomnova today</p>
+<div id="msg" class="msg error"></div>
 <input id="email" type="email" placeholder="Email">
-<input id="pass" type="password" placeholder="Password">
-<a class="forgot" onclick="forgot()">Forgot password?</a>
-<button class="btn" onclick="login()">Login</button>
-<div class="links">No account? <a href="signup.html">Create Account</a></div>
+<input id="pass" type="password" placeholder="Password (min 6 chars)">
+<button class="btn" onclick="signup()">Create Account</button>
+<div class="links">Already have account? <a href="login.html">Login</a></div>
 </div>
+<div id="welcome"><div class="wcard"><h2>🎉 Welcome to Ibomnova!</h2><p style="color:#888;margin:12px 0 18px;font-size:14px;line-height:1.5">Your account is ready! We're excited to have you. Let's start building amazing things together.</p><button class="btn" onclick="location.href='chat.html'">🚀 Start Chatting Now</button></div></div>
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-const firebaseConfig = { apiKey: "AIzaSyDp...", authDomain: "ibomnova.firebaseapp.com", projectId: "ibomnova" };
+import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+const firebaseConfig = { apiKey: "AIzaSyCIjfg0XnJNlDnutG-8z0hzOH2Pun3Odog", authDomain: "ibomnova.firebaseapp.com", projectId: "ibomnova", storageBucket: "ibomnova.firebasestorage.app", messagingSenderId: "271815396164", appId: "1:271815396164:web:0d6b220c5881b984192511" };
 const app = initializeApp(firebaseConfig); const auth=getAuth(app);
-function show(t,c){const m=document.getElementById('msg');m.innerText=t;m.className='msg '+c;m.style.display='block'}
-window.login=async()=>{try{await signInWithEmailAndPassword(auth,email.value,pass.value);show('Login success! Opening chat...','success');setTimeout(()=>location.href='chat.html',1000)}catch(e){show(e.code=='auth/invalid-credential'?'Wrong email or password':'Error: '+e.message,'error')}}
-window.forgot=async()=>{if(!email.value){show('Enter email first','error');return}try{await sendPasswordResetEmail(auth,email.value);show('✅ Reset link sent! Check your email inbox','success')}catch(e){show(e.message,'error')}}
+function show(t){const m=document.getElementById('msg');m.innerText=t;m.style.display='block'}
+window.signup=async()=>{try{if(pass.value.length<6){show('Password must be 6+ chars');return}await createUserWithEmailAndPassword(auth,email.value,pass.value);document.getElementById('welcome').style.display='flex'}catch(e){if(e.code=='auth/email-already-in-use'){show('This email already exists! Please Login or use Forgot Password.')}else{show(e.message)}}}
 </script></body></html>
