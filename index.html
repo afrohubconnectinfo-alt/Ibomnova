@@ -1,53 +1,40 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ibomnova - Global AI Assistant</title>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login - Ibomnova</title>
+<link rel="icon" href="favicon-32.png">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:Arial;background:#0a0a0a;color:white}
-.header{padding:14px 5%;display:flex;justify-content:space-between;align-items:center;position:fixed;width:100%;top:0;background:#0f0f0f;border-bottom:1px solid #222;z-index:10}
-.logo{display:flex;align-items:center;gap:8px;font-weight:bold;font-size:19px}
-.logo-icon{width:32px;height:32px;background:linear-gradient(135deg,#7c3aed,#c084fc);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px}
-.logo span{color:#7c3aed}
-.btn{padding:10px 20px;border-radius:20px;border:none;font-weight:bold;cursor:pointer;text-decoration:none;font-size:14px}
-.btn-purple{background:#7c3aed;color:white}
-.hero{padding:110px 5% 50px;text-align:center;max-width:850px;margin:0 auto}
-.hero h1{font-size:40px;line-height:1.1;margin-bottom:16px} .hero h1 span{background:linear-gradient(90deg,#7c3aed,#c084fc);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.hero p{color:#aaa;line-height:1.6;margin-bottom:28px;font-size:16px;max-width:650px;margin-left:auto;margin-right:auto}
-.features{padding:20px 5%;display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;max-width:1100px;margin:0 auto}
-.card{background:#151515;border:1px solid #222;padding:20px;border-radius:16px}
-.card h3{font-size:15px;margin-bottom:7px} .card p{font-size:13px;color:#888;line-height:1.5}
-.center{padding:50px 5%;text-align:center;background:radial-gradient(ellipse at center,#1a102e, #111);margin-top:40px;border-top:1px solid #222;border-bottom:1px solid #222}
-.footer{padding:24px;text-align:center;color:#555;font-size:12px}
+body{font-family:Arial;background:#0a0a0a;color:white;display:flex;justify-content:center;align-items:center;min-height:100vh;padding:20px}
+.box{background:#151515;border:1px solid #222;border-radius:20px;padding:30px;width:100%;max-width:380px;text-align:center}
+.logo img{height:34px;background:white;padding:4px 12px;border-radius:8px;margin-bottom:16px}
+h2{font-size:24px} .sub{color:#777;font-size:13px;margin:6px 0 18px}
+input{width:100%;padding:13px;border-radius:12px;border:1px solid #333;background:#0f0f0f;color:white;margin-bottom:12px;outline:none}
+input:focus{border-color:#7c3aed}
+.btn{width:100%;padding:13px;border-radius:12px;border:none;background:#7c3aed;color:white;font-weight:bold;cursor:pointer}
+.forgot{display:block;text-align:right;font-size:12px;color:#9d6bff;text-decoration:none;margin:-6px 0 12px;cursor:pointer}
+.links{margin-top:16px;font-size:13px;color:#777} .links a{color:#9d6bff;text-decoration:none;font-weight:bold}
+.msg{font-size:13px;padding:10px;border-radius:10px;display:none;margin-bottom:12px} .error{background:#2a1212;color:#ff6b6b} .success{background:#122a14;color:#4ade80}
 </style>
 </head>
 <body>
-<div class="header">
-<div class="logo"><div class="logo-icon">I</div>IBOM<span>NOVA</span></div>
-<a href="chat.html" class="btn btn-purple">Chat Now</a>
+<div class="box">
+<div class="logo"><img src="logo.png"></div>
+<h2>Welcome Back</h2><p class="sub">Login to Ibomnova</p>
+<div id="msg" class="msg"></div>
+<input id="email" type="email" placeholder="Email">
+<input id="pass" type="password" placeholder="Password">
+<a class="forgot" onclick="forgot()">Forgot password?</a>
+<button class="btn" onclick="login()">Login</button>
+<div class="links">No account? <a href="signup.html">Create Account</a></div>
 </div>
-
-<div class="hero">
-<h1>Intelligence That <span>Understands You</span></h1>
-<p>A powerful, multilingual AI assistant for everyone. From house plans with local costing, to business strategies, coding, education, and creative writing — fluent in 100+ languages including English, Spanish, French, plus Pidgin, Ibibio, Igbo, Yoruba & Hausa.</p>
-<a href="chat.html" class="btn btn-purple">🚀 Start Chatting Free</a>
-</div>
-
-<div class="features">
-<div class="card"><h3>🏠 Smart Planning & Costing</h3><p>Get detailed house plans, construction estimates, material lists and local cost breakdowns tailored to your location anywhere in the world.</p></div>
-<div class="card"><h3>🌍 100+ Languages</h3><p>Communicate naturally in any language. We support global languages and African languages with perfect local context and understanding.</p></div>
-<div class="card"><h3>💡 Built for Everything</h3><p>Business plans, academic help, coding, farming advice, content creation, career guidance — your all-in-one assistant for work and life.</p></div>
-<div class="card"><h3>⚡ Fast & Private</h3><p>Lightning-fast responses, secure, and designed to give you accurate, helpful answers without complications.</p></div>
-</div>
-
-<div class="center">
-<h2 style="font-size:28px;margin-bottom:12px">Ready to Experience the Future?</h2>
-<p style="color:#888;margin-bottom:22px">Join thousands of users worldwide using Ibomnova daily.</p>
-<a href="chat.html" class="btn btn-purple" style="padding:14px 30px;font-size:16px">Start Chatting Now</a>
-</div>
-
-<div class="footer">© 2026 IBOMNOVA - All Rights Reserved</div>
-</body>
-</html>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+const firebaseConfig = { apiKey: "AIzaSyCIjfg0XnJNlDnutG-8z0hzOH2Pun3Odog", authDomain: "ibomnova.firebaseapp.com", projectId: "ibomnova", storageBucket: "ibomnova.firebasestorage.app", messagingSenderId: "271815396164", appId: "1:271815396164:web:0d6b220c5881b984192511" };
+const app = initializeApp(firebaseConfig); const auth=getAuth(app);
+function show(t,c){const m=document.getElementById('msg');m.innerText=t;m.className='msg '+c;m.style.display='block'}
+window.login=async()=>{try{await signInWithEmailAndPassword(auth,email.value,pass.value);show('Login success! Opening chat...','success');setTimeout(()=>location.href='chat.html',1000)}catch(e){show(e.code=='auth/invalid-credential'?'Wrong email or password':'Error: '+e.message,'error')}}
+window.forgot=async()=>{if(!email.value){show('Enter email first','error');return}try{await sendPasswordResetEmail(auth,email.value);show('✅ Reset link sent! Check your email inbox','success')}catch(e){show(e.message,'error')}}
+</script></body></html>
