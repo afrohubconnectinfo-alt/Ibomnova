@@ -1,139 +1,189 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>IbomNova - For Everyone, Everywhere</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',sans-serif}
-body{background:#000;display:flex;justify-content:center;min-height:100vh}
-.app{width:100%;max-width:430px;background:#034d24;color:#fff;min-height:100vh;display:flex;flex-direction:column}
-.flag{height:8px;background:linear-gradient(180deg,#ff7a00 33%,#fff 33%,#fff 66%,#0a7a3a 66%)}
-.top{display:flex;justify-content:space-between;align-items:center;padding:16px 20px}
-.logo{font-size:26px;font-weight:900}.logo span{color:#ff7a00}
-.badge{background:#ff7a00;font-size:10px;font-weight:800;padding:6px 10px;border-radius:20px}
-.hero{padding:28px 22px 10px}.hero h1{font-size:36px;line-height:1.08}.hero h1 b{color:#7dff9a}
-.sub{color:#ff8c1a;font-weight:800;margin:12px 0;font-size:19px}
-.hero p{font-size:14px;line-height:1.5;opacity:.9}
-.btn{width:calc(100% - 44px);margin:18px 22px 0;padding:15px;border:none;border-radius:12px;font-size:19px;font-weight:900;cursor:pointer}
-.btn-orange{background:#ff7a00;color:#fff}.btn-login{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.3);margin-top:10px}
-.social{padding:18px 22px;text-align:center}.world{color:#b8ffb8;font-size:14px}
-.proof{background:rgba(255,255,255,.12);border-radius:20px;padding:12px;display:flex;gap:10px;align-items:center;margin-top:12px;text-align:left}
-.proof b{font-size:12px;line-height:1.3}.proof small{color:#ffd700}
-.footer{padding:12px;text-align:center;font-size:12px;opacity:.7;background:#000;margin-top:auto}
-.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);justify-content:center;align-items:center;z-index:10}
+body{background:#000;color:#fff}
+.app{max-width:1000px;margin:auto;display:flex;min-height:100vh}
+/* SIDEBAR - HISTORY LIKE CHATGPT */
+.side{width:260px;background:#0f3d1e;display:none;flex-direction:column;padding:14px}
+.side.show{display:flex}
+.side h2{font-size:22px}.side h2 span{color:#ff7a00}
+.newbtn{background:#ff7a00;border:none;color:#fff;padding:12px;border-radius:10px;font-weight:800;cursor:pointer;margin:14px 0}
+.hist{flex:1;overflow:auto}.hist div{background:rgba(255,255,255,.08);padding:10px;border-radius:8px;margin-bottom:8px;font-size:13px;cursor:pointer;display:flex;justify-content:space-between}
+.hist div:hover{background:rgba(255,255,255,.15)}
+.userbox{border-top:1px solid rgba(255,255,255,.2);padding-top:10px;font-size:13px}
+.userbox button{background:#222;color:#fff;border:none;padding:8px 10px;border-radius:8px;cursor:pointer;margin-top:8px}
+/* MAIN */
+.main{flex:1;display:flex;flex-direction:column;background:#034d24;min-height:100vh}
+.flag{height:6px;background:linear-gradient(180deg,#ff7a00 33%,#fff 33%,#fff 66%,#0a7a3a 66%)}
+.top{display:flex;justify-content:space-between;align-items:center;padding:14px 18px}
+.menu{font-size:22px;cursor:pointer}
+.badge{background:#ff7a00;font-size:10px;padding:6px 10px;border-radius:20px;font-weight:800}
+/* LANDING */
+.landing{padding:30px 22px;text-align:left}
+.landing h1{font-size:36px;line-height:1.1}.landing h1 b{color:#7dff9a}
+.sub{color:#ff8c1a;font-weight:800;margin:12px 0}
+.btn{width:100%;padding:15px;border:none;border-radius:12px;font-size:18px;font-weight:900;cursor:pointer;margin-top:12px}
+.btn-o{background:#ff7a00;color:#fff}.btn-g{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.4)}
+.social{text-align:center;padding:16px}.proof{background:rgba(255,255,255,.12);padding:12px;border-radius:16px;margin-top:10px;font-size:13px}
+/* AUTH */
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);justify-content:center;align-items:center;z-index:20}
 .modal.show{display:flex}
-.box{background:#fff;color:#111;width:90%;max-width:360px;padding:22px;border-radius:16px}
+.box{background:#fff;color:#111;width:92%;max-width:380px;padding:22px;border-radius:16px}
 .box input{width:100%;padding:12px;margin:8px 0;border:1px solid #ddd;border-radius:10px}
-.box button{width:100%;padding:13px;background:#ff7a00;color:#fff;border:none;border-radius:10px;font-weight:900;margin-top:10px;cursor:pointer}
+.box button{width:100%;padding:13px;background:#ff7a00;color:#fff;border:none;border-radius:10px;font-weight:900;margin-top:8px;cursor:pointer}
+.link{color:#ff7a00;cursor:pointer;font-weight:700}
 /* CHAT */
 .chat{display:none;flex-direction:column;flex:1;background:#0a0a0a}
 .chat.active{display:flex}
-.chat-head{display:flex;justify-content:space-between;align-items:center;padding:14px;background:#034d24}
-.back{cursor:pointer;color:#ff8c1a;font-weight:800}
-.head-btn{background:rgba(255,255,255,.15);border:none;color:#fff;padding:7px 11px;border-radius:20px;cursor:pointer;font-size:12px}
-.msgs{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:10px;padding:14px}
-.m-user{align-self:flex-end;background:#8b5cf6;color:#fff;padding:10px 14px;border-radius:16px 16px 4px 16px;max-width:85%;font-size:14px}
-.m-ai{align-self:flex-start;background:#222;color:#fff;padding:12px;border-radius:16px 16px 16px 4px;max-width:92%;font-size:14px;line-height:1.5}
-/* ACTION BAR - LIKE SHARE COPY DISLIKE SUPPORT */
-.acts{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
-.acts button{background:#333;color:#ddd;border:1px solid #444;border:none;padding:7px 10px;border-radius:20px;font-size:13px;cursor:pointer;display:flex;align-items:center;gap:4px}
-.acts button.active{background:#ff7a00;color:#fff}
-.acts button.support{background:#034d24;color:#7dff9a;border:1px solid #0a7a3a}
+.msgs{flex:1;overflow:auto;padding:14px;display:flex;flex-direction:column;gap:12px}
+.m-user{align-self:flex-end;background:#8b5cf6;padding:10px 14px;border-radius:16px 16px 4px 16px;max-width:85%;font-size:14px}
+.m-ai{align-self:flex-start;background:#222;padding:12px;border-radius:16px 16px 16px 4px;max-width:92%;font-size:14px;line-height:1.6}
+.acts{display:flex;gap:7px;margin-top:10px;flex-wrap:wrap}
+.acts button{background:#333;color:#ddd;border:none;padding:7px 10px;border-radius:20px;font-size:12px;cursor:pointer}
+.acts button.sup{background:#034d24;color:#7dff9a}
 .input-row{display:flex;gap:8px;padding:12px;background:#111}
-.input-row input{flex:1;padding:13px;border-radius:25px;border:none;outline:none;background:#222;color:#fff}
-.input-row button{background:#ff7a00;color:#fff;border:none;padding:0 18px;border-radius:25px;font-size:18px;cursor:pointer}
-.tips{background:#fff7e6;color:#333;padding:12px;border-radius:12px;margin:10px 14px;font-size:13px;line-height:1.5;display:none}
+.input-row input{flex:1;padding:13px;border-radius:25px;border:none;background:#222;color:#fff;outline:none}
+.input-row button{background:#ff7a00;border:none;padding:0 18px;border-radius:25px;font-size:18px;cursor:pointer;color:#fff}
+.tips{background:#fff7e6;color:#222;padding:12px;border-radius:12px;margin:0 14px 10px;font-size:13px;display:none}
 .tips.show{display:block}
+@media(max-width:700px){.side{position:fixed;left:0;top:0;bottom:0;z-index:30}}
 </style>
 </head>
 <body>
 <div class="app">
-<div class="flag"></div>
+<!-- SIDEBAR HISTORY -->
+<div class="side" id="sidebar">
+<h2>✦ Ibom<span style="color:#ff7a00">Nova</span></h2>
+<button class="newbtn" onclick="newChat()">+ New Chat</button>
+<div class="hist" id="histList"></div>
+<div class="userbox"><div id="sideUser">Guest</div><button onclick="logout()">Logout</button></div>
+</div>
 
-<!-- LANDING PAGE -->
-<div id="welcome">
-<div class="top"><div class="logo">✦ Ibom<span>Nova</span></div><div class="badge">GLOBAL • WORLDWIDE</div></div>
-<div class="hero">
+<div class="main">
+<div class="flag"></div>
+<div class="top"><span class="menu" onclick="toggleSide()">☰</span><b>IbomNova AI</b><span class="badge">GLOBAL • WORLDWIDE</span></div>
+
+<!-- LANDING -->
+<div id="landing" class="landing">
 <h1>Hello —<br>I'm IbomNova<br><b>for Everyone,<br>Everywhere</b></h1>
 <div class="sub">ideas • learning • growth</div>
-<p>Chat, create, and explore with IbomNova — fast, private, and built for you. For the whole world, anytime, anywhere.</p>
-</div>
-<button class="btn btn-orange" onclick="showChat()">Get Started</button>
-<button class="btn btn-login" onclick="openLogin()">Login</button>
-<div class="social">
-<div class="world">🌍 Available Worldwide • 50+ Countries</div>
-<div class="proof"><div style="font-size:22px">👨‍👩‍👧</div><div><small>★★★★★</small><br><b>Loved by 10,000+ learners, creators & startups worldwide</b></div></div>
-</div>
-<div class="footer">Global • Secure • 24/7 • <span id="userLabel">Guest</span></div>
+<p style="font-size:14px;line-height:1.6;opacity:.9">Chat, create, and explore with IbomNova — fast, private, and built for you. For the whole world, anytime, anywhere.</p>
+<button class="btn btn-o" onclick="checkAuth()">Get Started</button>
+<button class="btn btn-g" onclick="openAuth('login')">Login</button>
+<button class="btn btn-g" onclick="openAuth('signup')">Create Account - Signup</button>
+<div class="social"><div>🌍 Available Worldwide • 50+ Countries</div><div class="proof">⭐⭐⭐⭐⭐<br><b>Loved by 10,000+ learners, creators & startups worldwide</b></div></div>
 </div>
 
 <!-- CHAT -->
 <div id="chat" class="chat">
-<div class="chat-head">
-<span class="back" onclick="showWelcome()">← IBOMNOVA</span>
-<div><button class="head-btn" onclick="newChat()">New chat</button> <button class="head-btn" onclick="logout()">Logout</button></div>
-</div>
-<div class="tips" id="tipsBox">💡 <b>Support Tips:</b><br>• Ask "How far" to gist<br>• Ask "Write email for me"<br>• Ask "Give me business idea"<br>• Ask "Explain like I'm 5"<br><br>Need help? WhatsApp us: <b>IbomNova Support</b></div>
+<div class="tips" id="tipsBox">💡 <b>Support Tips:</b><br>• "Write email for me"<br>• "Give me business idea"<br>• "Explain photosynthesis like I'm 5"<br>• "Write code for portfolio"<br><br>Need help? WhatsApp: <b>IbomNova Support</b></div>
 <div class="msgs" id="msgs"></div>
 <div class="input-row"><input id="q" placeholder="Ask IbomNova anything..." onkeydown="if(event.key==='Enter')send()"><button onclick="send()">➤</button></div>
 </div>
 </div>
+</div>
 
-<!-- LOGIN -->
-<div class="modal" id="loginModal"><div class="box">
-<h2>Welcome back 👋</h2><p style="font-size:13px;color:#666">Login to save your chats</p>
-<input id="name" placeholder="Your name"><input id="email" placeholder="Email">
-<button onclick="doLogin()">Continue →</button>
-<button onclick="closeLogin()" style="background:#eee;color:#333">Cancel</button>
+<!-- AUTH MODAL -->
+<div class="modal" id="authModal"><div class="box">
+<h2 id="authTitle">Create Account</h2><p id="authSub" style="font-size:13px;color:#666">Signup to save history & remember you</p>
+<input id="aName" placeholder="Your full name">
+<input id="aEmail" placeholder="Email">
+<input id="aPass" type="password" placeholder="Password (min 4)">
+<button onclick="doAuth()">Continue →</button>
+<p style="text-align:center;font-size:13px;margin-top:10px"><span id="switchText">Already have account? <span class="link" onclick="openAuth('login')">Login</span></span></p>
+<button onclick="closeAuth()" style="background:#eee;color:#333">Cancel</button>
 </div></div>
 
 <script>
-let user = localStorage.getItem('ibom_user') || 'Guest';
-document.getElementById('userLabel').innerText = user;
-function showChat(){
-  document.getElementById('welcome').style.display='none';
-  document.getElementById('chat').classList.add('active');
-  if(document.getElementById('msgs').innerHTML==='') addAI("Hello! I'm IbomNova — your AI assistant for Everyone, Everywhere. Ask me anything!");
-  loadHistory();
-}
-function showWelcome(){document.getElementById('welcome').style.display='block';document.getElementById('chat').classList.remove('active');}
-function openLogin(){document.getElementById('loginModal').classList.add('show')}
-function closeLogin(){document.getElementById('loginModal').classList.remove('show')}
-function doLogin(){let n=document.getElementById('name').value||'Friend';localStorage.setItem('ibom_user',n);document.getElementById('userLabel').innerText=n;closeLogin();showChat();addAI('Welcome back, '+n+'! How can I help you today?');}
-function logout(){localStorage.removeItem('ibom_user');user='Guest';document.getElementById('userLabel').innerText='Guest';showWelcome();}
-function newChat(){localStorage.removeItem('ibom_chat');document.getElementById('msgs').innerHTML='';addAI('New chat started! What do you want to do?');}
+let mode='signup';
+let currentUser = JSON.parse(localStorage.getItem('ibom_current')||'null');
+let users = JSON.parse(localStorage.getItem('ibom_users')||'{}');
+let chats = JSON.parse(localStorage.getItem('ibom_chats')||'{}'); // {chatId: [{role,text}]}
+let currentChatId = localStorage.getItem('ibom_currentChat')||null;
 
-function addAI(text){
-  let d=document.createElement('div'); d.className='m-ai';
-  d.innerHTML=`<div class="ai-text">${text}</div>
-  <div class="acts">
-    <button onclick="copyText(this)">📋 Copy</button>
-    <button onclick="shareText(this)">↗️ Share</button>
-    <button onclick="like(this)">👍 Like</button>
-    <button onclick="dislike(this)">👎 Dislike</button>
-    <button class="support" onclick="toggleTips()">💡 Support Tips</button>
-  </div>`;
-  document.getElementById('msgs').appendChild(d);
-  document.getElementById('msgs').scrollTop=9999; saveHistory();
+function toggleSide(){document.getElementById('sidebar').classList.toggle('show')}
+function openAuth(m){mode=m;document.getElementById('authTitle').innerText=m==='signup'?'Create Account':'Welcome back 👋';document.getElementById('authSub').innerText=m==='signup'?'Signup to save history & remember you':'Login to continue your chats';document.getElementById('aName').style.display=m==='signup'?'block':'none';document.getElementById('switchText').innerHTML=m==='signup'?'Already have account? <span class="link" onclick="openAuth(\'login\')">Login</span>':'No account? <span class="link" onclick="openAuth(\'signup\')">Signup</span>';document.getElementById('authModal').classList.add('show')}
+function closeAuth(){document.getElementById('authModal').classList.remove('show')}
+function checkAuth(){ if(currentUser) showChat(); else openAuth('signup'); }
+function doAuth(){
+ let name=document.getElementById('aName').value.trim();
+ let email=document.getElementById('aEmail').value.trim().toLowerCase();
+ let pass=document.getElementById('aPass').value;
+ if(!email||pass.length<4) return alert('Enter valid email & password min 4');
+ if(mode==='signup'){
+   if(users[email]) return alert('Account don exist, please login');
+   users[email]={name:name||email.split('@')[0],email,pass}; localStorage.setItem('ibom_users',JSON.stringify(users));
+ } else {
+   if(!users[email]||users[email].pass!==pass) return alert('Wrong email or password. Signup first if you never signup.');
+ }
+ currentUser=users[email]; localStorage.setItem('ibom_current',JSON.stringify(currentUser));
+ document.getElementById('sideUser').innerText=currentUser.name+' • '+currentUser.email;
+ closeAuth(); showChat(); renderHist();
+ if(!currentChatId) newChat();
 }
-function addUser(text){let d=document.createElement('div');d.className='m-user';d.innerText=text;document.getElementById('msgs').appendChild(d);saveHistory();}
-function send(){let inp=document.getElementById('q');let q=inp.value.trim();if(!q)return;addUser(q);inp.value='';setTimeout(()=>{addAI(reply(q))},500);}
-function reply(q){
-  let l=q.toLowerCase();
-  if(l.includes('how far')||l.includes('how are you')) return 'I dey o! 😊 I dey great, thanks for asking. How you dey? Anything new for your side?';
-  if(l.includes('code')||l.includes('html')) return 'Sure! I fit help you code. Tell me wetin you wan build — e.g. "Build portfolio website" and I go write the code.';
-  if(l.includes('email')) return 'Here is sample email:<br><br>Subject: Partnership Request<br><br>Hello, I am '+user+'. I would love to collaborate with you...<br><br>Want make I make am formal or casual?';
-  if(l.includes('business')||l.includes('idea')) return 'Business idea: 1) Start small digital service 2) Post daily on TikTok/WhatsApp 3) Give free sample, then charge. Want full plan?';
-  return 'Great question about "'+q+'":<br>1. Break am small small<br>2. Start with simplest version<br>3. Test, learn, improve.<br><br>Want full step-by-step plan?';
+function logout(){localStorage.removeItem('ibom_current');currentUser=null;currentChatId=null;document.getElementById('chat').classList.remove('active');document.getElementById('landing').style.display='block';document.getElementById('sidebar').classList.remove('show');}
+function showChat(){
+ document.getElementById('landing').style.display='none';
+ document.getElementById('chat').classList.add('active');
+ document.getElementById('sidebar').classList.add('show');
+ if(currentUser) document.getElementById('sideUser').innerText=currentUser.name+' • '+currentUser.email;
+ renderHist();
+ if(currentChatId && chats[currentChatId]) renderMsgs();
+ else if(!currentChatId) newChat();
 }
-function copyText(btn){let t=btn.closest('.m-ai').querySelector('.ai-text').innerText;navigator.clipboard.writeText(t);btn.innerText='✅ Copied';setTimeout(()=>btn.innerText='📋 Copy',1500);}
-function shareText(btn){let t=btn.closest('.m-ai').querySelector('.ai-text').innerText;if(navigator.share)navigator.share({text:t,title:'IbomNova'});else{navigator.clipboard.writeText(t);btn.innerText='✅ Copied for Share';}}
-function like(btn){btn.classList.add('active');btn.innerText='❤️ Liked';let sib=btn.parentElement.querySelectorAll('button');sib.forEach(b=>{if(b.innerText.includes('Dislike')){b.classList.remove('active');b.innerText='👎 Dislike';}});}
-function dislike(btn){btn.classList.add('active');btn.innerText='👎 Disliked';addAI('Sorry about that 🙏 Tell me how I fit answer am better? I go try again.');}
+function newChat(){
+ currentChatId='chat_'+Date.now(); localStorage.setItem('ibom_currentChat',currentChatId);
+ chats[currentChatId]=[{role:'ai',text:`Hello ${currentUser?currentUser.name:'friend'}! 👋 I'm IbomNova — your AI assistant for Everyone, Everywhere. I remember you now. Ask me anything — business, code, school, email, gist, anything!`}];
+ saveChats(); renderMsgs(); renderHist();
+}
+function renderHist(){
+ let h=document.getElementById('histList'); h.innerHTML='';
+ Object.keys(chats).reverse().forEach(id=>{
+   let first=chats[id].find(m=>m.role==='user'); let title=first?first.text.slice(0,28):'New Chat';
+   let d=document.createElement('div'); d.innerHTML=`<span onclick="openChat('${id}')">${title}</span><span onclick="delChat('${id}')">🗑️</span>`; h.appendChild(d);
+ });
+}
+function openChat(id){currentChatId=id;localStorage.setItem('ibom_currentChat',id);renderMsgs(); if(window.innerWidth<700) toggleSide();}
+function delChat(id){delete chats[id];saveChats(); if(id===currentChatId) newChat(); else renderHist();}
+function saveChats(){localStorage.setItem('ibom_chats',JSON.stringify(chats));}
+function renderMsgs(){
+ let box=document.getElementById('msgs'); box.innerHTML='';
+ chats[currentChatId].forEach(m=>{
+   if(m.role==='user'){let d=document.createElement('div');d.className='m-user';d.innerText=m.text;box.appendChild(d);}
+   else {let d=document.createElement('div');d.className='m-ai';d.innerHTML=`<div class="ai-text">${m.text}</div><div class="acts"><button onclick="copyText(this)">📋 Copy</button><button onclick="shareText(this)">↗️ Share</button><button onclick="like(this)">👍 Like</button><button onclick="dislike(this)">👎 Dislike</button><button class="sup" onclick="toggleTips()">💡 Support Tips</button></div>`;box.appendChild(d);}
+ });
+ box.scrollTop=9999;
+}
+function send(){
+ let inp=document.getElementById('q');let q=inp.value.trim();if(!q)return;
+ chats[currentChatId].push({role:'user',text:q}); inp.value=''; renderMsgs(); saveChats(); renderHist();
+ // typing
+ let typing=document.createElement('div');typing.className='m-ai';typing.id='typing';typing.innerText='IbomNova is typing...';document.getElementById('msgs').appendChild(typing);
+ setTimeout(()=>{document.getElementById('typing')?.remove(); let ans=smartReply(q); chats[currentChatId].push({role:'ai',text:ans}); saveChats(); renderMsgs(); renderHist();},800);
+}
+function smartReply(q){
+ let l=q.toLowerCase(); let name=currentUser?currentUser.name:'friend';
+ if(l.includes('hello')||l==='hi'||l.includes('how far')) return `How far ${name}! 😊 I dey o, I dey great. How you dey? Wetin you wan do today — learn, create, business, or code? Tell me, I go help you sharp sharp.`;
+ if(l.includes('who are you')||l.includes('your name')) return `I be IbomNova — your AI assistant for Everyone, Everywhere. I fit help you write, learn, code, plan business, and gist. I remember you as ${name}, so your chats go save.`;
+ if(l.includes('business')||l.includes('make money')) return `<b>Business Plan for ${name}:</b><br><br>1. <b>Pick skill:</b> Design, writing, tutoring, or selling digital product<br>2. <b>Offer free sample:</b> Do 1 free work for testimonial<br>3. <b>Post daily:</b> TikTok + WhatsApp Status + Instagram<br>4. <b>Price:</b> Start ₦5k-₦20k, increase as you grow<br>5. <b>Scale:</b> Build WhatsApp group, collect reviews<br><br>Which one you like? I go give you full plan for am.`;
+ if(l.includes('email')) return `<b>Sample Email:</b><br><br>Subject: Partnership / Application<br><br>Hello,<br><br>My name is ${name}. I am writing to... I would love to work with you because...<br><br>Thank you for your time.<br>Best regards,<br>${name}<br><br>Want am formal, casual, or for job application? Tell me.`;
+ if(l.includes('code')||l.includes('html')||l.includes('website')||l.includes('portfolio')) return `<b>I go help you code!</b><br>Tell me exactly wetin you wan build:<br>• Portfolio website?<br>• Landing page?<br>• Calculator?<br>• School project?<br><br>Example: "Build portfolio for photographer" — I go write full HTML code for you now.`;
+ if(l.includes('photosynthesis')||l.includes('explain like')) return `<b>Explain like you are 5:</b><br>Plants dey cook their own food with sunlight, water, and air — like how you cook rice with fire. Sun na their fire, leaf na their pot. That na photosynthesis! 🌱`;
+ if(l.includes('study')||l.includes('exam')||l.includes('school')) return `For exam, do this ${name}:<br>1. Read topic, write 5 key points<br>2. Teach am to someone (or to me)<br>3. Do past questions<br>4. Sleep well before exam<br><br>Which subject be that? I go quiz you now.`;
+ if(l.includes('thank')) return `You are welcome ${name}! ❤️ Anytime you need me, I dey here. Wetin next?`;
+ if(l.includes('love')||l.includes('sad')||l.includes('tired')) return `I hear you ${name}. E fit hard sometimes, but you dey try well. Take small rest, drink water, and no give up. You wan make we plan your day together to make e lighter?`;
+ return `<b>Good question ${name}!</b><br>You ask about "<b>${q}</b>".<br><br>Here is how to handle am:<br>1. <b>Understand:</b> Wetin be the main goal?<br>2. <b>Break am:</b> Divide am into 3 small steps<br>3. <b>Start now:</b> Do the smallest step today<br>4. <b>Improve:</b> Check result, adjust<br><br>Tell me more detail — e.g. "Give me full plan for this" or "Give example" — I go give you deeper answer like ChatGPT.`;
+}
+function copyText(b){let t=b.closest('.m-ai').querySelector('.ai-text').innerText;navigator.clipboard.writeText(t);b.innerText='✅ Copied';setTimeout(()=>b.innerText='📋 Copy',1500);}
+function shareText(b){let t=b.closest('.m-ai').querySelector('.ai-text').innerText;if(navigator.share)navigator.share({text:t});else{navigator.clipboard.writeText(t);b.innerText='✅ Copied';}}
+function like(b){b.innerText='❤️ Liked';}
+function dislike(b){b.innerText='👎 Noted'; chats[currentChatId].push({role:'ai',text:'Sorry about that 🙏 Tell me how I fit answer am better? Give me more detail and I go try again with better answer.'}); saveChats(); renderMsgs();}
 function toggleTips(){document.getElementById('tipsBox').classList.toggle('show');}
-function saveHistory(){localStorage.setItem('ibom_chat',document.getElementById('msgs').innerHTML);}
-function loadHistory(){let h=localStorage.getItem('ibom_chat');if(h)document.getElementById('msgs').innerHTML=h;}
+if(currentUser){document.getElementById('sideUser').innerText=currentUser.name+' • '+currentUser.email;}
 </script>
 </body>
 </html>
