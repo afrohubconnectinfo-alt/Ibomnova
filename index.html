@@ -34,16 +34,13 @@ body{background:#0a0a0a;color:#fff}
 .chat.active{display:flex}
 .msgs{flex:1;overflow:auto;padding:16px;display:flex;flex-direction:column;gap:14px}
 .m-user{align-self:flex-end;background:#8b5cf6;padding:10px 14px;border-radius:16px 16px 4px 16px;max-width:85%;font-size:14px;white-space:pre-wrap}
-/* AI MESSAGE - TIGHT, NO EXTRA SPACE */
 .m-ai{align-self:flex-start;background:transparent;padding:2px;max-width:95%;font-size:15px;line-height:1.6;white-space:pre-wrap}
-.m-ai b{font-weight:800}
-.m-ai h3{font-size:16px;margin:8px 0 4px}
-/* BUTTONS CLOSE TO MESSAGE - LIKE CHATGPT */
+.m-ai b{font-weight:800}.m-ai h3{font-size:16px;margin:8px 0 4px}
 .acts{display:flex;gap:0;margin-top:4px!important;padding-top:0;background:transparent!important}
-.acts button{background:transparent!important;color:#888;border:none;padding:6px 7px;border-radius:50%;font-size:15px;cursor:pointer;line-height:1}
+.acts button{background:transparent!important;color:#888;border:none;padding:6px 7px;border-radius:50%;font-size:15px;cursor:pointer}
 .acts button:hover{background:rgba(255,255,255,.08)!important;color:#fff}
 .acts button.liked{color:#4ade80}.acts button.disliked{color:#f87171}
-.more-menu{display:none;position:absolute;background:#2a2a2a;border-radius:10px;padding:6px;z-index:5;flex-direction:column;min-width:160px;box-shadow:0 4px 20px rgba(0,0,0,.5)}
+.more-menu{display:none;position:absolute;background:#2a2a2a;border-radius:10px;padding:6px;z-index:5;flex-direction:column;min-width:160px}
 .more-menu.show{display:flex}
 .more-menu button{background:transparent;color:#fff;border:none;text-align:left;padding:10px;font-size:13px;cursor:pointer}
 .wrap{position:relative}
@@ -59,189 +56,119 @@ body{background:#0a0a0a;color:#fff}
 </head>
 <body>
 <div class="app">
-<div class="side" id="sidebar">
-<h2>✦ Ibom<span>Nova</span></h2>
-<button class="newbtn" onclick="startNewChat()">+ New Chat</button>
-<div class="hist" id="histList"></div>
-<div class="userbox"><div id="sideUser">Guest</div><button onclick="logout()">Logout</button></div>
-</div>
-
-<div class="main">
-<div class="flag"></div>
-<div class="top"><span class="menu" onclick="toggleSide()">☰</span><b>IbomNova AI</b><span style="width:24px"></span></div>
-
-<div id="landing" class="landing">
-<h1>Hello —<br>I'm IbomNova<br><b>for Everyone,<br>Everywhere</b></h1>
-<div class="sub">ideas • learning • growth</div>
-<p style="font-size:14px;line-height:1.6;opacity:.9">Chat, create, and explore with IbomNova — fast, private, and built for you. For the whole world, anytime, anywhere.</p>
-<button class="btn btn-o" onclick="checkAuth()">Get Started</button>
-<button class="btn btn-g" onclick="openAuth('login')">Login</button>
-<button class="btn btn-g" onclick="openAuth('signup')">Create Account - Signup</button>
-<div class="social"><div>🌍 Available Worldwide • 50+ Countries</div><div class="proof">⭐⭐⭐⭐⭐<br><b>Loved by 10,000+ learners, creators & startups worldwide</b></div></div>
-</div>
-
-<div id="chat" class="chat">
-<div class="msgs" id="msgs"></div>
-<div class="input-row"><input id="q" placeholder="Ask IbomNova anything..." onkeydown="if(event.key==='Enter')send()"><button onclick="send()">➤</button></div>
-</div>
-</div>
-</div>
-
-<div class="modal" id="authModal"><div class="box">
-<h2 id="authTitle">Create Account</h2><p style="font-size:13px;color:#666">Signup to save history & remember you</p>
-<input id="aName" placeholder="Your full name"><input id="aEmail" placeholder="Email"><input id="aPass" type="password" placeholder="Password (min 4)">
-<button onclick="doAuth()">Continue →</button>
-<p style="text-align:center;font-size:13px;margin-top:10px"><span id="switchText"></span></p>
-<button onclick="closeAuth()" style="background:#eee;color:#333">Cancel</button>
+<div class="side" id="sidebar"><h2>✦ Ibom<span>Nova</span></h2><button class="newbtn" onclick="startNewChat()">+ New Chat</button><div class="hist" id="histList"></div><div class="userbox"><div id="sideUser">Guest</div><button onclick="logout()">Logout</button></div></div>
+<div class="main"><div class="flag"></div><div class="top"><span class="menu" onclick="toggleSide()">☰</span><b>IbomNova AI</b><span style="width:24px"></span></div>
+<div id="landing" class="landing"><h1>Hello —<br>I'm IbomNova<br><b>for Everyone,<br>Everywhere</b></h1><div class="sub">ideas • learning • growth</div><p style="font-size:14px;line-height:1.6;opacity:.9">Chat, create, and explore with IbomNova — fast, private, and built for you. For the whole world, anytime, anywhere.</p><button class="btn btn-o" onclick="checkAuth()">Get Started</button><button class="btn btn-g" onclick="openAuth('login')">Login</button><button class="btn btn-g" onclick="openAuth('signup')">Create Account - Signup</button><div class="social"><div>🌍 Available Worldwide • 50+ Countries</div><div class="proof">⭐⭐⭐⭐⭐<br><b>Loved by 10,000+ learners, creators & startups worldwide</b></div></div></div>
+<div id="chat" class="chat"><div class="msgs" id="msgs"></div><div class="input-row"><input id="q" placeholder="Ask IbomNova anything..." onkeydown="if(event.key==='Enter')send()"><button onclick="send()">➤</button></div></div>
 </div></div>
-
+<div class="modal" id="authModal"><div class="box"><h2 id="authTitle">Create Account</h2><p style="font-size:13px;color:#666">Signup to save history & remember you</p><input id="aName" placeholder="Your full name"><input id="aEmail" placeholder="Email"><input id="aPass" type="password" placeholder="Password (min 4)"><button onclick="doAuth()">Continue →</button><p style="text-align:center;font-size:13px;margin-top:10px"><span id="switchText"></span></p><button onclick="closeAuth()" style="background:#eee;color:#333">Cancel</button></div></div>
 <div class="tipsPop" id="tipsPop"><div class="tipsBox"><b>💡 Support Tips</b><br><br>• Ask anything like ChatGPT<br>• "What is Uyo?"<br>• "Write email for job"<br>• "Give me business idea"<br><br>Need help? WhatsApp: <b>IbomNova Support</b><button onclick="closeTips()">Close</button></div></div>
-
 <script>
 let mode='signup';
 let currentUser=JSON.parse(localStorage.getItem('ibom_current')||'null');
 let users=JSON.parse(localStorage.getItem('ibom_users')||'{}');
 let chats=JSON.parse(localStorage.getItem('ibom_chats')||'{}');
 let currentChatId=localStorage.getItem('ibom_currentChat')||null;
+let lastCall=0;
 
-// IBOMNOVA TRUE KNOWLEDGE - NO MORE LIE FOR NIGERIA
 const TRUE_FACTS={
- 'uyo':`Uyo is the capital city of Akwa Ibom State in southeastern Nigeria — NOT Abia State.\n\nKey facts:\n• Location: Uyo sits in the Niger-Delta region, about 500 km east of Lagos\n• Population: About 800,000 to 1 million people, one of Nigeria's fastest-growing cities\n• History: Founded as a small settlement, it became capital in 1987 when Akwa Ibom State was created from Cross River State\n• Known for: Ibom Tropicana, Godswill Akpabio Stadium, University of Uyo, clean city, hospitality, and Akwa Ibom culture\n• People: Mainly Ibibio people, known for food like Afang soup, Edikang Ikong, and hospitality`,
- 'akwa ibom':`Akwa Ibom is a state in southeastern Nigeria, created on 27 September 1987. Its capital is Uyo. It is known for oil, palm oil, cleanest city in Nigeria (Uyo), and rich Ibibio culture.`,
- 'abia':`Abia State is a state in southeastern Nigeria. Its capital is Umuahia — NOT Uyo. Abia is known for Aba (commercial city), Ariaria Market, and trade.`,
+ 'uyo':`Uyo is the capital city of Akwa Ibom State in southeastern Nigeria — NOT Abia State.\n\nKey facts:\n• Location: Uyo sits in the Niger-Delta region, about 500 km east of Lagos\n• Population: About 800,000 to 1 million people, one of Nigeria's fastest-growing cities\n• History: It became capital in 1987 when Akwa Ibom State was created\n• Known for: Godswill Akpabio Stadium, University of Uyo, Ibom Tropicana, clean city, and Akwa Ibom culture\n• People: Mainly Ibibio people, known for Afang soup, Edikang Ikong, and hospitality`,
+ 'akwa ibom':`Akwa Ibom is a state in southeastern Nigeria, created on 27 September 1987. Its capital is Uyo. Known for oil, cleanest city (Uyo), and rich Ibibio culture.`,
+ 'abia':`Abia State is a state in southeastern Nigeria. Its capital is Umuahia — NOT Uyo. Abia is known for Aba (commercial city) and Ariaria Market.`,
  'umuahia':`Umuahia is the capital city of Abia State in southeastern Nigeria.`,
- 'aba':`Aba is a big commercial city in Abia State, famous for Ariaria International Market and manufacturing.`,
- 'lagos':`Lagos is the largest city in Nigeria and former capital. Its capital is Ikeja. Lagos is the commercial centre of Nigeria.`,
- 'abuja':`Abuja is the capital city of Nigeria, in the Federal Capital Territory. It became capital in 1991, replacing Lagos.`,
- 'onitsha':`Onitsha is a major commercial city in Anambra State, southeastern Nigeria, famous for Onitsha Main Market — one of the largest markets in West Africa.`,
+ 'aba':`Aba is a big commercial city in Abia State, famous for Ariaria International Market.`,
+ 'lagos':`Lagos is the largest city in Nigeria. Its capital is Ikeja. Lagos is the commercial centre of Nigeria.`,
+ 'abuja':`Abuja is the capital city of Nigeria, in the Federal Capital Territory. It became capital in 1991.`,
+ 'onitsha':`Onitsha is a major commercial city in Anambra State, famous for Onitsha Main Market — one of the largest markets in West Africa.`,
  'anambra':`Anambra State is in southeastern Nigeria. Its capital is Awka. Famous cities: Onitsha, Nnewi, Awka.`,
- 'port harcourt':`Port Harcourt is the capital of Rivers State in southern Nigeria, known as the Garden City and oil hub.`,
+ 'port harcourt':`Port Harcourt is the capital of Rivers State, known as Garden City and oil hub.`,
  'kano':`Kano is a major city in northern Nigeria, capital of Kano State, one of the oldest cities in West Africa.`,
- 'ibadan':`Ibadan is the capital of Oyo State in southwestern Nigeria, one of the largest cities in Africa by land area.`,
- 'enugu':`Enugu is the capital of Enugu State in southeastern Nigeria, known as Coal City.`,
- 'calabar':`Calabar is the capital of Cross River State, known for Carnival Calabar, Tinapa, and tourism.`,
- 'nigeria':`Nigeria is a country in West Africa, the most populous country in Africa with over 220 million people. Its capital is Abuja, largest city is Lagos. It has 36 states + FCT.`
+ 'ibadan':`Ibadan is the capital of Oyo State in southwestern Nigeria.`,
+ 'enugu':`Enugu is the capital of Enugu State, known as Coal City.`,
+ 'calabar':`Calabar is the capital of Cross River State, known for Carnival Calabar.`,
+ 'nigeria':`Nigeria is a country in West Africa, most populous in Africa with over 220 million people. Capital is Abuja, largest city is Lagos. It has 36 states + FCT.`
 };
-
 function toggleSide(){document.getElementById('sidebar').classList.toggle('show')}
 function openAuth(m){mode=m;document.getElementById('authTitle').innerText=m==='signup'?'Create Account':'Welcome back 👋';document.getElementById('aName').style.display=m==='signup'?'block':'none';document.getElementById('switchText').innerHTML=m==='signup'?'Already have account? <span class="link" onclick="openAuth(\'login\')">Login</span>':'No account? <span class="link" onclick="openAuth(\'signup\')">Signup</span>';document.getElementById('authModal').classList.add('show')}
 function closeAuth(){document.getElementById('authModal').classList.remove('show')}
 function checkAuth(){if(currentUser) showChat(); else openAuth('signup')}
-function doAuth(){
- let name=document.getElementById('aName').value.trim();
- let email=document.getElementById('aEmail').value.trim().toLowerCase();
- let pass=document.getElementById('aPass').value;
- if(!email||pass.length<4) return alert('Enter valid email & password min 4');
- if(mode==='signup'){ if(users[email]) return alert('Account don exist, please login'); users[email]={name:name||email.split('@')[0],email,pass}; localStorage.setItem('ibom_users',JSON.stringify(users)); }
- else { if(!users[email]||users[email].pass!==pass) return alert('Wrong email or password'); }
- currentUser=users[email]; localStorage.setItem('ibom_current',JSON.stringify(currentUser));
- document.getElementById('sideUser').innerText=currentUser.name+' • '+currentUser.email;
- closeAuth(); showChat(); renderHist();
-}
+function doAuth(){let name=document.getElementById('aName').value.trim();let email=document.getElementById('aEmail').value.trim().toLowerCase();let pass=document.getElementById('aPass').value;if(!email||pass.length<4) return alert('Enter valid email & password min 4');if(mode==='signup'){if(users[email]) return alert('Account don exist, please login');users[email]={name:name||email.split('@')[0],email,pass};localStorage.setItem('ibom_users',JSON.stringify(users));}else{if(!users[email]||users[email].pass!==pass) return alert('Wrong email or password');}currentUser=users[email];localStorage.setItem('ibom_current',JSON.stringify(currentUser));document.getElementById('sideUser').innerText=currentUser.name+' • '+currentUser.email;closeAuth();showChat();renderHist();}
 function logout(){localStorage.removeItem('ibom_current');currentUser=null;currentChatId=null;document.getElementById('chat').classList.remove('active');document.getElementById('landing').style.display='block';}
-function showChat(){
- document.getElementById('landing').style.display='none';
- document.getElementById('chat').classList.add('active');
- document.getElementById('sidebar').classList.add('show');
- if(currentUser) document.getElementById('sideUser').innerText=currentUser.name+' • '+currentUser.email;
- renderHist();
- if(!currentChatId || !chats[currentChatId]){
-   currentChatId='chat_'+Date.now(); localStorage.setItem('ibom_currentChat',currentChatId);
-   chats[currentChatId]=[{role:'ai',text:`Hello ${currentUser?currentUser.name:'friend'}! 👋 I'm IbomNova — your AI assistant for Everyone, Everywhere. Ask me anything like ChatGPT!`,isWelcome:true}];
-   saveChats(); renderHist();
- }
- renderMsgs();
-}
-function startNewChat(){
- currentChatId='chat_'+Date.now(); localStorage.setItem('ibom_currentChat',currentChatId);
- chats[currentChatId]=[{role:'ai',text:`New chat started! 👋 What do you want to ask, ${currentUser?currentUser.name:'friend'}?`,isWelcome:true}];
- saveChats(); renderMsgs(); renderHist(); if(window.innerWidth<700) toggleSide();
-}
-function renderHist(){
- let h=document.getElementById('histList'); h.innerHTML='';
- Object.keys(chats).reverse().forEach(id=>{
-   let first=chats[id].find(m=>m.role==='user'); if(!first) return;
-   let title=first.text.slice(0,30);
-   let d=document.createElement('div'); d.innerHTML=`<span onclick="openChat('${id}')" style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${title}</span><span onclick="delChat('${id}')">🗑️</span>`; h.appendChild(d);
- });
- if(h.innerHTML==='') h.innerHTML='<div style="opacity:.6">No chats yet. Start one!</div>';
-}
-function openChat(id){currentChatId=id;localStorage.setItem('ibom_currentChat',id);renderMsgs(); if(window.innerWidth<700) toggleSide();}
-function delChat(id){delete chats[id];saveChats(); if(id===currentChatId){currentChatId=null;showChat();} else renderHist();}
+function showChat(){document.getElementById('landing').style.display='none';document.getElementById('chat').classList.add('active');document.getElementById('sidebar').classList.add('show');if(currentUser) document.getElementById('sideUser').innerText=currentUser.name+' • '+currentUser.email;renderHist();if(!currentChatId||!chats[currentChatId]){currentChatId='chat_'+Date.now();localStorage.setItem('ibom_currentChat',currentChatId);chats[currentChatId]=[{role:'ai',text:`Hello ${currentUser?currentUser.name:'friend'}! 👋 I'm IbomNova — your AI assistant for Everyone, Everywhere. Ask me anything like ChatGPT!`,isWelcome:true}];saveChats();renderHist();}renderMsgs();}
+function startNewChat(){currentChatId='chat_'+Date.now();localStorage.setItem('ibom_currentChat',currentChatId);chats[currentChatId]=[{role:'ai',text:`New chat started! 👋 What do you want to ask, ${currentUser?currentUser.name:'friend'}?`,isWelcome:true}];saveChats();renderMsgs();renderHist();if(window.innerWidth<700)toggleSide();}
+function renderHist(){let h=document.getElementById('histList');h.innerHTML='';Object.keys(chats).reverse().forEach(id=>{let first=chats[id].find(m=>m.role==='user');if(!first)return;let title=first.text.slice(0,30);let d=document.createElement('div');d.innerHTML=`<span onclick="openChat('${id}')" style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${title}</span><span onclick="delChat('${id}')">🗑️</span>`;h.appendChild(d);});if(h.innerHTML==='')h.innerHTML='<div style="opacity:.6">No chats yet. Start one!</div>';}
+function openChat(id){currentChatId=id;localStorage.setItem('ibom_currentChat',id);renderMsgs();if(window.innerWidth<700)toggleSide();}
+function delChat(id){delete chats[id];saveChats();if(id===currentChatId){currentChatId=null;showChat();}else renderHist();}
 function saveChats(){localStorage.setItem('ibom_chats',JSON.stringify(chats));}
+function formatAI(text){let html=text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').replace(/###\s*(.+)/g,'<h3>$1</h3>').replace(/##\s*(.+)/g,'<h3>$1</h3>').replace(/\n- /g,'<br>• ').replace(/\n/g,'<br>');html=html.replace(/\*/g,'');return html;}
+function aiHTML(m){if(m.isWelcome) return `<div class="ai-text">${formatAI(m.text)}</div>`;return `<div class="ai-text">${formatAI(m.text)}</div><div class="wrap"><div class="acts"><button onclick="copyIcon(this)">📋</button><button onclick="likeIcon(this)">👍</button><button onclick="dislikeIcon(this)">👎</button><button onclick="speakIcon(this)">🔊</button><button onclick="shareIcon(this)">↗️</button><button onclick="toggleMore(this)">⋮</button></div><div class="more-menu"><button onclick="openTips()">💡 Support Tips</button><button onclick="copyIcon(this.closest('.m-ai').querySelector('.acts button'))">📋 Copy text</button></div></div>`;}
+function renderMsgs(){let box=document.getElementById('msgs');box.innerHTML='';if(!chats[currentChatId])return;chats[currentChatId].forEach(m=>{if(m.role==='user'){let d=document.createElement('div');d.className='m-user';d.innerText=m.text;box.appendChild(d);}else{let d=document.createElement('div');d.className='m-ai';d.innerHTML=aiHTML(m);box.appendChild(d);}});box.scrollTop=9999;}
 
-function formatAI(text){
-  let html=text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
-    .replace(/\*\*(.+?)\*\*/g,'<b>$1</b>')
-    .replace(/###\s*(.+)/g,'<h3>$1</h3>').replace(/##\s*(.+)/g,'<h3>$1</h3>')
-    .replace(/\n- /g,'<br>• ').replace(/\n/g,'<br>');
-  html=html.replace(/\*/g,'');
-  return html;
+// CLEAN ANSWER - NEVER SHOW JSON ERROR
+function isBadAnswer(t){
+  if(!t) return true;
+  if(t.includes('{"success"')||t.includes('output_token_limit')||t.includes('Free limit reached')||t.includes('UpstreamError')||t.includes('exhausted its output')) return true;
+  if(t.trim().startsWith('{') && t.includes('error')) return true;
+  return false;
 }
-function aiHTML(m){
-  if(m.isWelcome) return `<div class="ai-text">${formatAI(m.text)}</div>`;
-  return `<div class="ai-text">${formatAI(m.text)}</div>
-  <div class="wrap"><div class="acts">
-     <button onclick="copyIcon(this)" title="Copy">📋</button>
-     <button onclick="likeIcon(this)" title="Like">👍</button>
-     <button onclick="dislikeIcon(this)" title="Dislike">👎</button>
-     <button onclick="speakIcon(this)" title="Read aloud">🔊</button>
-     <button onclick="shareIcon(this)" title="Share">↗️</button>
-     <button onclick="toggleMore(this)" title="More">⋮</button>
-   </div><div class="more-menu"><button onclick="openTips()">💡 Support Tips</button><button onclick="copyIcon(this.closest('.m-ai').querySelector('.acts button'))">📋 Copy text</button></div></div>`;
+function smartLocalAnswer(q){
+  let l=q.toLowerCase();
+  if(l.includes('hello')||l==='hi'||l==='hy'||l.includes('how far')) return `Hello ${currentUser?currentUser.name:'friend'}! 😊 I dey o, I dey great. How you dey? Wetin you wan do today — learn, business, code, or gist?`;
+  if(l.includes('who are you')) return `I be IbomNova — your AI assistant for Everyone, Everywhere. I fit help you write, learn, code, plan business, and answer any question. I remember you as ${currentUser?currentUser.name:'friend'}.`;
+  if(l.includes('business')||l.includes('make money')) return `Business idea for you:\n\n1. Pick a skill — design, writing, tutoring, or selling\n2. Do 1 free sample for testimonial\n3. Post daily on TikTok + WhatsApp Status\n4. Start price ₦5k-₦20k, increase as you grow\n\nWhich one you like? I go give you full plan.`;
+  if(l.includes('email')) return `Sample Email:\n\nSubject: Application / Partnership\n\nHello,\n\nMy name is ${currentUser?currentUser.name:'Friend'}. I am writing to... I would love to work with you because...\n\nThank you.\nBest regards,\n${currentUser?currentUser.name:'Friend'}\n\nWant am formal or casual? Tell me.`;
+  if(l.includes('code')||l.includes('website')||l.includes('portfolio')) return `I go help you code! Tell me wetin you wan build — Portfolio? Landing page? Calculator? Example: "Build portfolio for photographer" and I go write the code.`;
+  return `Great question about "${q}".\n\nHere is how to handle am:\n1. Understand the main goal\n2. Break am into 3 small steps\n3. Start the smallest step today\n4. Check result and improve\n\nTell me more detail — e.g. "Give me full plan" or "Give example" — I go give you deeper answer.`;
 }
-function renderMsgs(){
- let box=document.getElementById('msgs'); box.innerHTML='';
- if(!chats[currentChatId]) return;
- chats[currentChatId].forEach(m=>{
-   if(m.role==='user'){let d=document.createElement('div');d.className='m-user';d.innerText=m.text;box.appendChild(d);}
-   else {let d=document.createElement('div');d.className='m-ai';d.innerHTML=aiHTML(m);box.appendChild(d);}
- });
- box.scrollTop=9999;
-}
-
-// SMART ANSWER - CHECK TRUE FACTS FIRST, THEN WIKIPEDIA, THEN AI
 async function getSmartAnswer(q){
   let l=q.toLowerCase();
-  for(let key in TRUE_FACTS){
-    if(l.includes(key)) return TRUE_FACTS[key];
-  }
-  // Try Wikipedia for "what is" questions - REAL FACTS
-  let match=l.match(/what is (.*)/) || l.match(/who is (.*)/) || l.match(/where is (.*)/);
+  for(let key in TRUE_FACTS){ if(l.includes(key)) return TRUE_FACTS[key]; }
+  // Wikipedia - REAL FACTS, NO LIMIT
+  let match=l.match(/what is (.*)/)||l.match(/who is (.*)/)||l.match(/where is (.*)/)||l.match(/what are (.*)/);
   if(match){
     let topic=match[1].replace(/\?/g,'').trim();
     try{
       let r=await fetch('https://en.wikipedia.org/api/rest_v1/page/summary/'+encodeURIComponent(topic));
       let j=await r.json();
-      if(j.extract && j.extract.length>50) return j.extract;
+      if(j.extract && j.extract.length>60 && !isBadAnswer(j.extract)) return j.extract;
+    }catch(e){}
+    // DuckDuckGo backup
+    try{
+      let r2=await fetch('https://api.duckduckgo.com/?q='+encodeURIComponent(topic)+'&format=json&no_html=1');
+      let j2=await r2.json();
+      if(j2.AbstractText && j2.AbstractText.length>60) return j2.AbstractText;
     }catch(e){}
   }
-  // Fallback to better AI model - with strong instruction
-  let name=currentUser?currentUser.name:'friend';
-  let prompt=`You are IbomNova, an expert AI like ChatGPT. You must give CORRECT facts. Important: Uyo is capital of Akwa Ibom State, NOT Abia. Umuahia is capital of Abia. Lagos capital is Ikeja. Abuja is capital of Nigeria. Never guess states. If unsure, say you are not sure. User is ${name}. Question: ${q}`;
-  let res=await fetch('https://text.pollinations.ai/'+encodeURIComponent(prompt)+'?model=openai');
-  let ans=await res.text();
-  return ans;
+  // Pollinations - SHORT prompt to avoid token limit, with wait
+  try{
+    let now=Date.now();
+    if(now-lastCall<2000){ await new Promise(r=>setTimeout(r,2000)); }
+    lastCall=Date.now();
+    let shortQ=q.slice(0,200);
+    let res=await fetch('https://text.pollinations.ai/'+encodeURIComponent('Answer briefly, max 150 words: '+shortQ)+'?model=mistral');
+    let ans=await res.text();
+    if(!isBadAnswer(ans) && ans.length>10) return ans;
+  }catch(e){}
+  return smartLocalAnswer(q);
 }
-
 async function send(){
- let inp=document.getElementById('q');let q=inp.value.trim();if(!q)return;
- if(!chats[currentChatId]){currentChatId='chat_'+Date.now();chats[currentChatId]=[];}
- chats[currentChatId].push({role:'user',text:q}); inp.value=''; renderMsgs(); saveChats(); renderHist();
- let typing=document.createElement('div');typing.className='m-ai';typing.id='typing';typing.innerText='IbomNova is typing...';document.getElementById('msgs').appendChild(typing);
- try{
-   let ans=await getSmartAnswer(q);
-   document.getElementById('typing')?.remove();
-   if(!ans||ans.length<5) throw new Error('empty');
-   chats[currentChatId].push({role:'ai',text:ans,isWelcome:false}); saveChats(); renderMsgs(); renderHist();
- }catch(e){
-   document.getElementById('typing')?.remove();
-   chats[currentChatId].push({role:'ai',text:`Sorry, network small issue. Try again.`,isWelcome:false}); saveChats(); renderMsgs();
- }
+  let inp=document.getElementById('q');let q=inp.value.trim();if(!q)return;
+  if(!chats[currentChatId]){currentChatId='chat_'+Date.now();chats[currentChatId]=[];}
+  chats[currentChatId].push({role:'user',text:q});inp.value='';renderMsgs();saveChats();renderHist();
+  let typing=document.createElement('div');typing.className='m-ai';typing.id='typing';typing.innerText='IbomNova is typing...';document.getElementById('msgs').appendChild(typing);
+  try{
+    let ans=await getSmartAnswer(q);
+    document.getElementById('typing')?.remove();
+    if(isBadAnswer(ans)) ans=smartLocalAnswer(q);
+    chats[currentChatId].push({role:'ai',text:ans,isWelcome:false});saveChats();renderMsgs();renderHist();
+  }catch(e){
+    document.getElementById('typing')?.remove();
+    chats[currentChatId].push({role:'ai',text:smartLocalAnswer(q),isWelcome:false});saveChats();renderMsgs();
+  }
 }
 function copyIcon(b){let t=b.closest('.m-ai').querySelector('.ai-text').innerText;navigator.clipboard.writeText(t);b.innerText='✅';setTimeout(()=>b.innerText='📋',1200);}
 function likeIcon(b){b.classList.toggle('liked');b.parentElement.children[2].classList.remove('disliked');}
-function dislikeIcon(b){b.classList.toggle('disliked');b.parentElement.children[1].classList.remove('liked'); if(b.classList.contains('disliked')){chats[currentChatId].push({role:'ai',text:'Sorry 🙏 How I fit answer am better? Tell me more detail.',isWelcome:false}); saveChats(); renderMsgs();}}
+function dislikeIcon(b){b.classList.toggle('disliked');b.parentElement.children[1].classList.remove('liked');if(b.classList.contains('disliked')){chats[currentChatId].push({role:'ai',text:'Sorry 🙏 How I fit answer am better? Tell me more detail.',isWelcome:false});saveChats();renderMsgs();}}
 function speakIcon(b){let t=b.closest('.m-ai').querySelector('.ai-text').innerText;speechSynthesis.speak(new SpeechSynthesisUtterance(t));}
 function shareIcon(b){let t=b.closest('.m-ai').querySelector('.ai-text').innerText;if(navigator.share)navigator.share({text:t,title:'IbomNova'});else{navigator.clipboard.writeText(t);b.innerText='✅';}}
 function toggleMore(b){let m=b.closest('.wrap').querySelector('.more-menu');m.classList.toggle('show');}
