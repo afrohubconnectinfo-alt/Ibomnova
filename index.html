@@ -1,40 +1,139 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Login - Ibomnova</title>
-<link rel="icon" href="favicon-32.png">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IbomNova - For Everyone, Everywhere</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:Arial;background:#0a0a0a;color:white;display:flex;justify-content:center;align-items:center;min-height:100vh;padding:20px}
-.box{background:#151515;border:1px solid #222;border-radius:20px;padding:30px;width:100%;max-width:380px;text-align:center}
-.logo img{height:34px;background:white;padding:4px 12px;border-radius:8px;margin-bottom:16px}
-h2{font-size:24px} .sub{color:#777;font-size:13px;margin:6px 0 18px}
-input{width:100%;padding:13px;border-radius:12px;border:1px solid #333;background:#0f0f0f;color:white;margin-bottom:12px;outline:none}
-input:focus{border-color:#7c3aed}
-.btn{width:100%;padding:13px;border-radius:12px;border:none;background:#7c3aed;color:white;font-weight:bold;cursor:pointer}
-.forgot{display:block;text-align:right;font-size:12px;color:#9d6bff;text-decoration:none;margin:-6px 0 12px;cursor:pointer}
-.links{margin-top:16px;font-size:13px;color:#777} .links a{color:#9d6bff;text-decoration:none;font-weight:bold}
-.msg{font-size:13px;padding:10px;border-radius:10px;display:none;margin-bottom:12px} .error{background:#2a1212;color:#ff6b6b} .success{background:#122a14;color:#4ade80}
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',sans-serif}
+body{background:#000;display:flex;justify-content:center;min-height:100vh}
+.app{width:100%;max-width:430px;background:#034d24;color:#fff;min-height:100vh;display:flex;flex-direction:column}
+.flag{height:8px;background:linear-gradient(180deg,#ff7a00 33%,#fff 33%,#fff 66%,#0a7a3a 66%)}
+.top{display:flex;justify-content:space-between;align-items:center;padding:16px 20px}
+.logo{font-size:26px;font-weight:900}.logo span{color:#ff7a00}
+.badge{background:#ff7a00;font-size:10px;font-weight:800;padding:6px 10px;border-radius:20px}
+.hero{padding:28px 22px 10px}.hero h1{font-size:36px;line-height:1.08}.hero h1 b{color:#7dff9a}
+.sub{color:#ff8c1a;font-weight:800;margin:12px 0;font-size:19px}
+.hero p{font-size:14px;line-height:1.5;opacity:.9}
+.btn{width:calc(100% - 44px);margin:18px 22px 0;padding:15px;border:none;border-radius:12px;font-size:19px;font-weight:900;cursor:pointer}
+.btn-orange{background:#ff7a00;color:#fff}.btn-login{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.3);margin-top:10px}
+.social{padding:18px 22px;text-align:center}.world{color:#b8ffb8;font-size:14px}
+.proof{background:rgba(255,255,255,.12);border-radius:20px;padding:12px;display:flex;gap:10px;align-items:center;margin-top:12px;text-align:left}
+.proof b{font-size:12px;line-height:1.3}.proof small{color:#ffd700}
+.footer{padding:12px;text-align:center;font-size:12px;opacity:.7;background:#000;margin-top:auto}
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);justify-content:center;align-items:center;z-index:10}
+.modal.show{display:flex}
+.box{background:#fff;color:#111;width:90%;max-width:360px;padding:22px;border-radius:16px}
+.box input{width:100%;padding:12px;margin:8px 0;border:1px solid #ddd;border-radius:10px}
+.box button{width:100%;padding:13px;background:#ff7a00;color:#fff;border:none;border-radius:10px;font-weight:900;margin-top:10px;cursor:pointer}
+/* CHAT */
+.chat{display:none;flex-direction:column;flex:1;background:#0a0a0a}
+.chat.active{display:flex}
+.chat-head{display:flex;justify-content:space-between;align-items:center;padding:14px;background:#034d24}
+.back{cursor:pointer;color:#ff8c1a;font-weight:800}
+.head-btn{background:rgba(255,255,255,.15);border:none;color:#fff;padding:7px 11px;border-radius:20px;cursor:pointer;font-size:12px}
+.msgs{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:10px;padding:14px}
+.m-user{align-self:flex-end;background:#8b5cf6;color:#fff;padding:10px 14px;border-radius:16px 16px 4px 16px;max-width:85%;font-size:14px}
+.m-ai{align-self:flex-start;background:#222;color:#fff;padding:12px;border-radius:16px 16px 16px 4px;max-width:92%;font-size:14px;line-height:1.5}
+/* ACTION BAR - LIKE SHARE COPY DISLIKE SUPPORT */
+.acts{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.acts button{background:#333;color:#ddd;border:1px solid #444;border:none;padding:7px 10px;border-radius:20px;font-size:13px;cursor:pointer;display:flex;align-items:center;gap:4px}
+.acts button.active{background:#ff7a00;color:#fff}
+.acts button.support{background:#034d24;color:#7dff9a;border:1px solid #0a7a3a}
+.input-row{display:flex;gap:8px;padding:12px;background:#111}
+.input-row input{flex:1;padding:13px;border-radius:25px;border:none;outline:none;background:#222;color:#fff}
+.input-row button{background:#ff7a00;color:#fff;border:none;padding:0 18px;border-radius:25px;font-size:18px;cursor:pointer}
+.tips{background:#fff7e6;color:#333;padding:12px;border-radius:12px;margin:10px 14px;font-size:13px;line-height:1.5;display:none}
+.tips.show{display:block}
 </style>
 </head>
 <body>
-<div class="box">
-<div class="logo"><img src="logo.png"></div>
-<h2>Welcome Back</h2><p class="sub">Login to Ibomnova</p>
-<div id="msg" class="msg"></div>
-<input id="email" type="email" placeholder="Email">
-<input id="pass" type="password" placeholder="Password">
-<a class="forgot" onclick="forgot()">Forgot password?</a>
-<button class="btn" onclick="login()">Login</button>
-<div class="links">No account? <a href="signup.html">Create Account</a></div>
+<div class="app">
+<div class="flag"></div>
+
+<!-- LANDING PAGE -->
+<div id="welcome">
+<div class="top"><div class="logo">✦ Ibom<span>Nova</span></div><div class="badge">GLOBAL • WORLDWIDE</div></div>
+<div class="hero">
+<h1>Hello —<br>I'm IbomNova<br><b>for Everyone,<br>Everywhere</b></h1>
+<div class="sub">ideas • learning • growth</div>
+<p>Chat, create, and explore with IbomNova — fast, private, and built for you. For the whole world, anytime, anywhere.</p>
 </div>
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-const firebaseConfig = { apiKey: "AIzaSyCIjfg0XnJNlDnutG-8z0hzOH2Pun3Odog", authDomain: "ibomnova.firebaseapp.com", projectId: "ibomnova", storageBucket: "ibomnova.firebasestorage.app", messagingSenderId: "271815396164", appId: "1:271815396164:web:0d6b220c5881b984192511" };
-const app = initializeApp(firebaseConfig); const auth=getAuth(app);
-function show(t,c){const m=document.getElementById('msg');m.innerText=t;m.className='msg '+c;m.style.display='block'}
-window.login=async()=>{try{await signInWithEmailAndPassword(auth,email.value,pass.value);show('Login success! Opening chat...','success');setTimeout(()=>location.href='chat.html',1000)}catch(e){show(e.code=='auth/invalid-credential'?'Wrong email or password':'Error: '+e.message,'error')}}
-window.forgot=async()=>{if(!email.value){show('Enter email first','error');return}try{await sendPasswordResetEmail(auth,email.value);show('✅ Reset link sent! Check your email inbox','success')}catch(e){show(e.message,'error')}}
-</script></body></html>
+<button class="btn btn-orange" onclick="showChat()">Get Started</button>
+<button class="btn btn-login" onclick="openLogin()">Login</button>
+<div class="social">
+<div class="world">🌍 Available Worldwide • 50+ Countries</div>
+<div class="proof"><div style="font-size:22px">👨‍👩‍👧</div><div><small>★★★★★</small><br><b>Loved by 10,000+ learners, creators & startups worldwide</b></div></div>
+</div>
+<div class="footer">Global • Secure • 24/7 • <span id="userLabel">Guest</span></div>
+</div>
+
+<!-- CHAT -->
+<div id="chat" class="chat">
+<div class="chat-head">
+<span class="back" onclick="showWelcome()">← IBOMNOVA</span>
+<div><button class="head-btn" onclick="newChat()">New chat</button> <button class="head-btn" onclick="logout()">Logout</button></div>
+</div>
+<div class="tips" id="tipsBox">💡 <b>Support Tips:</b><br>• Ask "How far" to gist<br>• Ask "Write email for me"<br>• Ask "Give me business idea"<br>• Ask "Explain like I'm 5"<br><br>Need help? WhatsApp us: <b>IbomNova Support</b></div>
+<div class="msgs" id="msgs"></div>
+<div class="input-row"><input id="q" placeholder="Ask IbomNova anything..." onkeydown="if(event.key==='Enter')send()"><button onclick="send()">➤</button></div>
+</div>
+</div>
+
+<!-- LOGIN -->
+<div class="modal" id="loginModal"><div class="box">
+<h2>Welcome back 👋</h2><p style="font-size:13px;color:#666">Login to save your chats</p>
+<input id="name" placeholder="Your name"><input id="email" placeholder="Email">
+<button onclick="doLogin()">Continue →</button>
+<button onclick="closeLogin()" style="background:#eee;color:#333">Cancel</button>
+</div></div>
+
+<script>
+let user = localStorage.getItem('ibom_user') || 'Guest';
+document.getElementById('userLabel').innerText = user;
+function showChat(){
+  document.getElementById('welcome').style.display='none';
+  document.getElementById('chat').classList.add('active');
+  if(document.getElementById('msgs').innerHTML==='') addAI("Hello! I'm IbomNova — your AI assistant for Everyone, Everywhere. Ask me anything!");
+  loadHistory();
+}
+function showWelcome(){document.getElementById('welcome').style.display='block';document.getElementById('chat').classList.remove('active');}
+function openLogin(){document.getElementById('loginModal').classList.add('show')}
+function closeLogin(){document.getElementById('loginModal').classList.remove('show')}
+function doLogin(){let n=document.getElementById('name').value||'Friend';localStorage.setItem('ibom_user',n);document.getElementById('userLabel').innerText=n;closeLogin();showChat();addAI('Welcome back, '+n+'! How can I help you today?');}
+function logout(){localStorage.removeItem('ibom_user');user='Guest';document.getElementById('userLabel').innerText='Guest';showWelcome();}
+function newChat(){localStorage.removeItem('ibom_chat');document.getElementById('msgs').innerHTML='';addAI('New chat started! What do you want to do?');}
+
+function addAI(text){
+  let d=document.createElement('div'); d.className='m-ai';
+  d.innerHTML=`<div class="ai-text">${text}</div>
+  <div class="acts">
+    <button onclick="copyText(this)">📋 Copy</button>
+    <button onclick="shareText(this)">↗️ Share</button>
+    <button onclick="like(this)">👍 Like</button>
+    <button onclick="dislike(this)">👎 Dislike</button>
+    <button class="support" onclick="toggleTips()">💡 Support Tips</button>
+  </div>`;
+  document.getElementById('msgs').appendChild(d);
+  document.getElementById('msgs').scrollTop=9999; saveHistory();
+}
+function addUser(text){let d=document.createElement('div');d.className='m-user';d.innerText=text;document.getElementById('msgs').appendChild(d);saveHistory();}
+function send(){let inp=document.getElementById('q');let q=inp.value.trim();if(!q)return;addUser(q);inp.value='';setTimeout(()=>{addAI(reply(q))},500);}
+function reply(q){
+  let l=q.toLowerCase();
+  if(l.includes('how far')||l.includes('how are you')) return 'I dey o! 😊 I dey great, thanks for asking. How you dey? Anything new for your side?';
+  if(l.includes('code')||l.includes('html')) return 'Sure! I fit help you code. Tell me wetin you wan build — e.g. "Build portfolio website" and I go write the code.';
+  if(l.includes('email')) return 'Here is sample email:<br><br>Subject: Partnership Request<br><br>Hello, I am '+user+'. I would love to collaborate with you...<br><br>Want make I make am formal or casual?';
+  if(l.includes('business')||l.includes('idea')) return 'Business idea: 1) Start small digital service 2) Post daily on TikTok/WhatsApp 3) Give free sample, then charge. Want full plan?';
+  return 'Great question about "'+q+'":<br>1. Break am small small<br>2. Start with simplest version<br>3. Test, learn, improve.<br><br>Want full step-by-step plan?';
+}
+function copyText(btn){let t=btn.closest('.m-ai').querySelector('.ai-text').innerText;navigator.clipboard.writeText(t);btn.innerText='✅ Copied';setTimeout(()=>btn.innerText='📋 Copy',1500);}
+function shareText(btn){let t=btn.closest('.m-ai').querySelector('.ai-text').innerText;if(navigator.share)navigator.share({text:t,title:'IbomNova'});else{navigator.clipboard.writeText(t);btn.innerText='✅ Copied for Share';}}
+function like(btn){btn.classList.add('active');btn.innerText='❤️ Liked';let sib=btn.parentElement.querySelectorAll('button');sib.forEach(b=>{if(b.innerText.includes('Dislike')){b.classList.remove('active');b.innerText='👎 Dislike';}});}
+function dislike(btn){btn.classList.add('active');btn.innerText='👎 Disliked';addAI('Sorry about that 🙏 Tell me how I fit answer am better? I go try again.');}
+function toggleTips(){document.getElementById('tipsBox').classList.toggle('show');}
+function saveHistory(){localStorage.setItem('ibom_chat',document.getElementById('msgs').innerHTML);}
+function loadHistory(){let h=localStorage.getItem('ibom_chat');if(h)document.getElementById('msgs').innerHTML=h;}
+</script>
+</body>
+</html>
