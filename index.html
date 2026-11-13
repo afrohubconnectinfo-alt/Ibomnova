@@ -16,7 +16,6 @@ body{background:#0a0a0a;color:#fff}
 .userbox button{background:#222;color:#fff;border:none;padding:8px 12px;border-radius:8px;cursor:pointer;margin-top:8px}
 .main{flex:1;display:flex;flex-direction:column;background:#034d24;min-height:100vh}
 .flag{height:6px;background:linear-gradient(180deg,#ff7a00 33%,#fff 33%,#fff 66%,#0a7a3a 66%)}
-/* TOP - NO GLOBAL BADGE AGAIN */
 .top{display:flex;justify-content:space-between;align-items:center;padding:14px 18px}
 .menu{font-size:22px;cursor:pointer}
 .landing{padding:28px 22px}
@@ -33,25 +32,24 @@ body{background:#0a0a0a;color:#fff}
 .link{color:#ff7a00;cursor:pointer;font-weight:700}
 .chat{display:none;flex-direction:column;flex:1;background:#0a0a0a}
 .chat.active{display:flex}
-.msgs{flex:1;overflow:auto;padding:16px;display:flex;flex-direction:column;gap:16px}
+.msgs{flex:1;overflow:auto;padding:16px;display:flex;flex-direction:column;gap:14px}
 .m-user{align-self:flex-end;background:#8b5cf6;padding:10px 14px;border-radius:16px 16px 4px 16px;max-width:85%;font-size:14px;white-space:pre-wrap}
-/* AI MESSAGE - NO BACKGROUND LIKE CHATGPT */
-.m-ai{align-self:flex-start;background:transparent;padding:4px 2px;max-width:95%;font-size:15px;line-height:1.65;white-space:pre-wrap}
-.m-ai b{font-weight:800;color:#fff}
-.m-ai h3{font-size:16px;margin:10px 0 4px}
-/* ACTIONS - NO BACKGROUND, CLEAN LIKE CHATGPT */
-.acts{display:flex;gap:2px;margin-top:8px;background:transparent!important}
-.acts button{background:transparent!important;color:#888;border:none;padding:8px 9px;border-radius:50%;font-size:16px;cursor:pointer;line-height:1}
+/* AI MESSAGE - TIGHT, NO EXTRA SPACE */
+.m-ai{align-self:flex-start;background:transparent;padding:2px;max-width:95%;font-size:15px;line-height:1.6;white-space:pre-wrap}
+.m-ai b{font-weight:800}
+.m-ai h3{font-size:16px;margin:8px 0 4px}
+/* BUTTONS CLOSE TO MESSAGE - LIKE CHATGPT */
+.acts{display:flex;gap:0;margin-top:4px!important;padding-top:0;background:transparent!important}
+.acts button{background:transparent!important;color:#888;border:none;padding:6px 7px;border-radius:50%;font-size:15px;cursor:pointer;line-height:1}
 .acts button:hover{background:rgba(255,255,255,.08)!important;color:#fff}
 .acts button.liked{color:#4ade80}.acts button.disliked{color:#f87171}
 .more-menu{display:none;position:absolute;background:#2a2a2a;border-radius:10px;padding:6px;z-index:5;flex-direction:column;min-width:160px;box-shadow:0 4px 20px rgba(0,0,0,.5)}
 .more-menu.show{display:flex}
-.more-menu button{background:transparent;color:#fff;border:none;text-align:left;padding:10px;font-size:13px;cursor:pointer;border-radius:6px}
+.more-menu button{background:transparent;color:#fff;border:none;text-align:left;padding:10px;font-size:13px;cursor:pointer}
 .wrap{position:relative}
 .input-row{display:flex;gap:8px;padding:12px;background:#111}
 .input-row input{flex:1;padding:13px;border-radius:25px;border:none;background:#222;color:#fff;outline:none}
 .input-row button{background:#ff7a00;border:none;padding:0 18px;border-radius:25px;font-size:18px;cursor:pointer;color:#fff}
-/* SUPPORT TIPS - ONLY AS POPUP, NOT TOP BOX */
 .tipsPop{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);justify-content:center;align-items:center;z-index:30}
 .tipsPop.show{display:flex}
 .tipsBox{background:#fff7e6;color:#222;padding:20px;border-radius:16px;width:90%;max-width:340px;font-size:14px;line-height:1.7}
@@ -70,7 +68,6 @@ body{background:#0a0a0a;color:#fff}
 
 <div class="main">
 <div class="flag"></div>
-<!-- TOP WITHOUT GLOBAL BADGE -->
 <div class="top"><span class="menu" onclick="toggleSide()">☰</span><b>IbomNova AI</b><span style="width:24px"></span></div>
 
 <div id="landing" class="landing">
@@ -98,7 +95,6 @@ body{background:#0a0a0a;color:#fff}
 <button onclick="closeAuth()" style="background:#eee;color:#333">Cancel</button>
 </div></div>
 
-<!-- SUPPORT TIPS POPUP -->
 <div class="tipsPop" id="tipsPop"><div class="tipsBox"><b>💡 Support Tips</b><br><br>• Ask anything like ChatGPT<br>• "What is Uyo?"<br>• "Write email for job"<br>• "Give me business idea"<br><br>Need help? WhatsApp: <b>IbomNova Support</b><button onclick="closeTips()">Close</button></div></div>
 
 <script>
@@ -107,6 +103,25 @@ let currentUser=JSON.parse(localStorage.getItem('ibom_current')||'null');
 let users=JSON.parse(localStorage.getItem('ibom_users')||'{}');
 let chats=JSON.parse(localStorage.getItem('ibom_chats')||'{}');
 let currentChatId=localStorage.getItem('ibom_currentChat')||null;
+
+// IBOMNOVA TRUE KNOWLEDGE - NO MORE LIE FOR NIGERIA
+const TRUE_FACTS={
+ 'uyo':`Uyo is the capital city of Akwa Ibom State in southeastern Nigeria — NOT Abia State.\n\nKey facts:\n• Location: Uyo sits in the Niger-Delta region, about 500 km east of Lagos\n• Population: About 800,000 to 1 million people, one of Nigeria's fastest-growing cities\n• History: Founded as a small settlement, it became capital in 1987 when Akwa Ibom State was created from Cross River State\n• Known for: Ibom Tropicana, Godswill Akpabio Stadium, University of Uyo, clean city, hospitality, and Akwa Ibom culture\n• People: Mainly Ibibio people, known for food like Afang soup, Edikang Ikong, and hospitality`,
+ 'akwa ibom':`Akwa Ibom is a state in southeastern Nigeria, created on 27 September 1987. Its capital is Uyo. It is known for oil, palm oil, cleanest city in Nigeria (Uyo), and rich Ibibio culture.`,
+ 'abia':`Abia State is a state in southeastern Nigeria. Its capital is Umuahia — NOT Uyo. Abia is known for Aba (commercial city), Ariaria Market, and trade.`,
+ 'umuahia':`Umuahia is the capital city of Abia State in southeastern Nigeria.`,
+ 'aba':`Aba is a big commercial city in Abia State, famous for Ariaria International Market and manufacturing.`,
+ 'lagos':`Lagos is the largest city in Nigeria and former capital. Its capital is Ikeja. Lagos is the commercial centre of Nigeria.`,
+ 'abuja':`Abuja is the capital city of Nigeria, in the Federal Capital Territory. It became capital in 1991, replacing Lagos.`,
+ 'onitsha':`Onitsha is a major commercial city in Anambra State, southeastern Nigeria, famous for Onitsha Main Market — one of the largest markets in West Africa.`,
+ 'anambra':`Anambra State is in southeastern Nigeria. Its capital is Awka. Famous cities: Onitsha, Nnewi, Awka.`,
+ 'port harcourt':`Port Harcourt is the capital of Rivers State in southern Nigeria, known as the Garden City and oil hub.`,
+ 'kano':`Kano is a major city in northern Nigeria, capital of Kano State, one of the oldest cities in West Africa.`,
+ 'ibadan':`Ibadan is the capital of Oyo State in southwestern Nigeria, one of the largest cities in Africa by land area.`,
+ 'enugu':`Enugu is the capital of Enugu State in southeastern Nigeria, known as Coal City.`,
+ 'calabar':`Calabar is the capital of Cross River State, known for Carnival Calabar, Tinapa, and tourism.`,
+ 'nigeria':`Nigeria is a country in West Africa, the most populous country in Africa with over 220 million people. Its capital is Abuja, largest city is Lagos. It has 36 states + FCT.`
+};
 
 function toggleSide(){document.getElementById('sidebar').classList.toggle('show')}
 function openAuth(m){mode=m;document.getElementById('authTitle').innerText=m==='signup'?'Create Account':'Welcome back 👋';document.getElementById('aName').style.display=m==='signup'?'block':'none';document.getElementById('switchText').innerHTML=m==='signup'?'Already have account? <span class="link" onclick="openAuth(\'login\')">Login</span>':'No account? <span class="link" onclick="openAuth(\'signup\')">Signup</span>';document.getElementById('authModal').classList.add('show')}
@@ -132,7 +147,6 @@ function showChat(){
  renderHist();
  if(!currentChatId || !chats[currentChatId]){
    currentChatId='chat_'+Date.now(); localStorage.setItem('ibom_currentChat',currentChatId);
-   // WELCOME MESSAGE - isWelcome=true, no actions
    chats[currentChatId]=[{role:'ai',text:`Hello ${currentUser?currentUser.name:'friend'}! 👋 I'm IbomNova — your AI assistant for Everyone, Everywhere. Ask me anything like ChatGPT!`,isWelcome:true}];
    saveChats(); renderHist();
  }
@@ -156,40 +170,25 @@ function openChat(id){currentChatId=id;localStorage.setItem('ibom_currentChat',i
 function delChat(id){delete chats[id];saveChats(); if(id===currentChatId){currentChatId=null;showChat();} else renderHist();}
 function saveChats(){localStorage.setItem('ibom_chats',JSON.stringify(chats));}
 
-// FIX **BOLD** LIKE CHATGPT - NO * GO SHOW
 function formatAI(text){
-  let html=text
-    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
-    .replace(/\*\*(.+?)\*\*/g,'<b>$1</b>') // **Uyo** -> bold Uyo
-    .replace(/###\s*(.+)/g,'<h3>$1</h3>')
-    .replace(/##\s*(.+)/g,'<h3>$1</h3>')
-    .replace(/\n- /g,'<br>• ')
-    .replace(/\n/g,'<br>');
-  // remove any leftover * 
+  let html=text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/\*\*(.+?)\*\*/g,'<b>$1</b>')
+    .replace(/###\s*(.+)/g,'<h3>$1</h3>').replace(/##\s*(.+)/g,'<h3>$1</h3>')
+    .replace(/\n- /g,'<br>• ').replace(/\n/g,'<br>');
   html=html.replace(/\*/g,'');
   return html;
 }
 function aiHTML(m){
-  if(m.isWelcome){
-    // WELCOME - NO ACTIONS
-    return `<div class="ai-text">${formatAI(m.text)}</div>`;
-  }
-  // NORMAL - WITH CLEAN ICONS, NO BACKGROUND
+  if(m.isWelcome) return `<div class="ai-text">${formatAI(m.text)}</div>`;
   return `<div class="ai-text">${formatAI(m.text)}</div>
-  <div class="wrap">
-   <div class="acts">
+  <div class="wrap"><div class="acts">
      <button onclick="copyIcon(this)" title="Copy">📋</button>
      <button onclick="likeIcon(this)" title="Like">👍</button>
      <button onclick="dislikeIcon(this)" title="Dislike">👎</button>
      <button onclick="speakIcon(this)" title="Read aloud">🔊</button>
      <button onclick="shareIcon(this)" title="Share">↗️</button>
      <button onclick="toggleMore(this)" title="More">⋮</button>
-   </div>
-   <div class="more-menu">
-     <button onclick="openTips()">💡 Support Tips</button>
-     <button onclick="copyIcon(this.closest('.m-ai').querySelector('.acts button'))">📋 Copy text</button>
-   </div>
-  </div>`;
+   </div><div class="more-menu"><button onclick="openTips()">💡 Support Tips</button><button onclick="copyIcon(this.closest('.m-ai').querySelector('.acts button'))">📋 Copy text</button></div></div>`;
 }
 function renderMsgs(){
  let box=document.getElementById('msgs'); box.innerHTML='';
@@ -200,16 +199,38 @@ function renderMsgs(){
  });
  box.scrollTop=9999;
 }
+
+// SMART ANSWER - CHECK TRUE FACTS FIRST, THEN WIKIPEDIA, THEN AI
+async function getSmartAnswer(q){
+  let l=q.toLowerCase();
+  for(let key in TRUE_FACTS){
+    if(l.includes(key)) return TRUE_FACTS[key];
+  }
+  // Try Wikipedia for "what is" questions - REAL FACTS
+  let match=l.match(/what is (.*)/) || l.match(/who is (.*)/) || l.match(/where is (.*)/);
+  if(match){
+    let topic=match[1].replace(/\?/g,'').trim();
+    try{
+      let r=await fetch('https://en.wikipedia.org/api/rest_v1/page/summary/'+encodeURIComponent(topic));
+      let j=await r.json();
+      if(j.extract && j.extract.length>50) return j.extract;
+    }catch(e){}
+  }
+  // Fallback to better AI model - with strong instruction
+  let name=currentUser?currentUser.name:'friend';
+  let prompt=`You are IbomNova, an expert AI like ChatGPT. You must give CORRECT facts. Important: Uyo is capital of Akwa Ibom State, NOT Abia. Umuahia is capital of Abia. Lagos capital is Ikeja. Abuja is capital of Nigeria. Never guess states. If unsure, say you are not sure. User is ${name}. Question: ${q}`;
+  let res=await fetch('https://text.pollinations.ai/'+encodeURIComponent(prompt)+'?model=openai');
+  let ans=await res.text();
+  return ans;
+}
+
 async function send(){
  let inp=document.getElementById('q');let q=inp.value.trim();if(!q)return;
  if(!chats[currentChatId]){currentChatId='chat_'+Date.now();chats[currentChatId]=[];}
  chats[currentChatId].push({role:'user',text:q}); inp.value=''; renderMsgs(); saveChats(); renderHist();
  let typing=document.createElement('div');typing.className='m-ai';typing.id='typing';typing.innerText='IbomNova is typing...';document.getElementById('msgs').appendChild(typing);
  try{
-   let name=currentUser?currentUser.name:'friend';
-   let prompt=`You are IbomNova, helpful friendly AI for Everyone, Everywhere. User name is ${name}. Answer clearly like ChatGPT. Use simple English. Do NOT use ** for bold, just plain text. User asks: ${q}`;
-   let res=await fetch('https://text.pollinations.ai/'+encodeURIComponent(prompt));
-   let ans=await res.text();
+   let ans=await getSmartAnswer(q);
    document.getElementById('typing')?.remove();
    if(!ans||ans.length<5) throw new Error('empty');
    chats[currentChatId].push({role:'ai',text:ans,isWelcome:false}); saveChats(); renderMsgs(); renderHist();
