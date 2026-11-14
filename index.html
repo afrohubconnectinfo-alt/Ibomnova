@@ -1,180 +1,670 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IbomNova - For Everyone, Everywhere</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IbomNova AI — For Everyone, Everywhere</title>
+
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',sans-serif}
-body{background:#0a0a0a;color:#fff}
-.app{max-width:1000px;margin:auto;display:flex;min-height:100vh}
-.side{width:270px;background:#0f3d1e;display:none;flex-direction:column;padding:14px}
-.side.show{display:flex}
-.side h2{font-size:24px}.side h2 span{color:#ff7a00}
-.newbtn{background:#ff7a00;border:none;color:#fff;padding:12px;border-radius:10px;font-weight:800;cursor:pointer;margin:14px 0}
-.hist{flex:1;overflow:auto}.hist div{background:rgba(255,255,255,.08);padding:11px;border-radius:8px;margin-bottom:8px;font-size:13px;cursor:pointer;display:flex;justify-content:space-between}
-.userbox{border-top:1px solid rgba(255,255,255,.2);padding-top:10px;font-size:13px}
-.userbox button{background:#222;color:#fff;border:none;padding:8px 12px;border-radius:8px;cursor:pointer;margin-top:8px}
-.main{flex:1;display:flex;flex-direction:column;background:#034d24;min-height:100vh}
-.flag{height:6px;background:linear-gradient(180deg,#ff7a00 33%,#fff 33%,#fff 66%,#0a7a3a 66%)}
-.top{display:flex;justify-content:space-between;align-items:center;padding:14px 18px}
-.menu{font-size:22px;cursor:pointer}
-.landing{padding:28px 22px}
-.landing h1{font-size:36px;line-height:1.1}.landing h1 b{color:#7dff9a}
-.sub{color:#ff8c1a;font-weight:800;margin:12px 0}
-.btn{width:100%;padding:15px;border:none;border-radius:12px;font-size:18px;font-weight:900;cursor:pointer;margin-top:12px}
-.btn-o{background:#ff7a00;color:#fff}.btn-g{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.4)}
-.social{text-align:center;padding:16px}.proof{background:rgba(255,255,255,.12);padding:12px;border-radius:16px;margin-top:10px;font-size:13px}
-.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);justify-content:center;align-items:center;z-index:20}
+:root {
+ --bg:#080d0b;
+ --panel:#111b16;
+ --panel2:#19251e;
+ --text:#f5f7f5;
+ --muted:#aab6ae;
+ --orange:#ff851b;
+ --green:#20a65a;
+ --border:rgba(255,255,255,.1);
+}
+body.light {
+ --bg:#f3f6f3;
+ --panel:#ffffff;
+ --panel2:#edf2ed;
+ --text:#152019;
+ --muted:#68766c;
+ --border:rgba(0,0,0,.1);
+}
+*{box-sizing:border-box;margin:0;padding:0;font-family:Arial,sans-serif}
+body{background:var(--bg);color:var(--text);min-height:100vh}
+button,input,textarea,select{font:inherit}
+button{cursor:pointer}
+.app{display:flex;min-height:100vh}
+.sidebar{
+ width:275px;background:var(--panel);border-right:1px solid var(--border);
+ padding:18px;display:flex;flex-direction:column;position:fixed;
+ left:0;top:0;bottom:0;z-index:20;transform:translateX(-100%);
+ transition:.25s;overflow-y:auto
+}
+.sidebar.open{transform:translateX(0)}
+.brand{font-size:24px;font-weight:900;margin-bottom:20px}
+.brand span{color:var(--orange)}
+.newchat,.primary{
+ background:var(--orange);color:white;border:0;border-radius:12px;
+ padding:13px;font-weight:bold;width:100%
+}
+.menu-title{font-size:11px;color:var(--muted);margin:22px 0 8px;text-transform:uppercase}
+.menu-item{
+ display:flex;align-items:center;gap:12px;padding:12px;
+ border-radius:10px;color:var(--text);border:0;background:transparent;
+ width:100%;text-align:left;margin:2px 0
+}
+.menu-item:hover,.menu-item.active{background:var(--panel2)}
+.badge{margin-left:auto;background:#e34b4b;color:white;border-radius:20px;padding:2px 7px;font-size:11px}
+.history{flex:1;min-height:60px}
+.history-item{padding:10px;border-radius:8px;font-size:13px;cursor:pointer;color:var(--muted);overflow:hidden}
+.history-item:hover{background:var(--panel2);color:var(--text)}
+.side-user{border-top:1px solid var(--border);padding-top:15px;display:flex;gap:10px;align-items:center}
+.avatar{width:38px;height:38px;border-radius:50%;background:var(--orange);display:flex;align-items:center;justify-content:center;overflow:hidden;font-weight:bold;color:white;flex-shrink:0}
+.avatar img{width:100%;height:100%;object-fit:cover}
+.main{width:100%;margin-left:0;min-height:100vh;display:flex;flex-direction:column}
+.topbar{height:65px;display:flex;align-items:center;justify-content:space-between;padding:0 18px;border-bottom:1px solid var(--border);background:var(--panel)}
+.iconbtn{border:0;background:transparent;color:var(--text);font-size:22px;padding:8px}
+.topbrand{font-weight:bold}
+.content{width:100%;max-width:900px;margin:auto;padding:22px;flex:1}
+.welcome{text-align:center;padding:55px 10px 25px}
+.welcome h1{font-size:clamp(32px,7vw,52px);line-height:1.15}
+.welcome h1 span{color:var(--orange)}
+.welcome p{color:var(--muted);line-height:1.7;margin:16px auto;max-width:550px}
+.chips{display:flex;gap:9px;flex-wrap:wrap;justify-content:center;margin:20px 0}
+.chip{border:1px solid var(--border);background:var(--panel);color:var(--text);padding:10px 13px;border-radius:20px;font-size:13px}
+.chat{display:flex;flex-direction:column;gap:17px;padding-bottom:20px}
+.message{max-width:90%;line-height:1.65;white-space:pre-wrap;overflow-wrap:anywhere}
+.user-message{align-self:flex-end;background:#6546c7;color:white;padding:12px 15px;border-radius:17px 17px 4px 17px}
+.ai-message{align-self:flex-start;padding:5px 2px;width:100%}
+.ai-text{line-height:1.7}
+.actions{display:flex;gap:7px;margin-top:8px}
+.actions button{border:0;background:var(--panel2);color:var(--muted);border-radius:8px;padding:7px 10px}
+.composer{position:sticky;bottom:0;background:var(--bg);padding:12px 15px 18px;border-top:1px solid var(--border)}
+.composer-inner{max-width:850px;margin:auto;display:flex;gap:8px;background:var(--panel);border:1px solid var(--border);border-radius:17px;padding:8px}
+.composer input{flex:1;min-width:0;background:transparent;color:var(--text);border:0;outline:0;padding:10px}
+.send{background:var(--orange);color:white;border:0;border-radius:12px;padding:0 18px;font-size:20px}
+.page{display:none}
+.page.active{display:block}
+.card{background:var(--panel);border:1px solid var(--border);padding:18px;border-radius:15px;margin:13px 0}
+.card h3{margin-bottom:12px}
+.card p{color:var(--muted);line-height:1.6}
+.field{margin:12px 0}
+.field label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
+.field input,.field textarea,.field select{
+ width:100%;padding:12px;border-radius:10px;border:1px solid var(--border);
+ background:var(--panel2);color:var(--text);outline:0
+}
+.field textarea{min-height:100px;resize:vertical}
+.secondary{background:var(--panel2);color:var(--text);border:1px solid var(--border);padding:11px 14px;border-radius:10px}
+.danger{background:#a52d2d;color:white;border:0;padding:11px 14px;border-radius:10px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.row>*{flex:1}
+.statgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.stat{background:var(--panel2);padding:14px;border-radius:12px;text-align:center}
+.stat strong{display:block;font-size:22px;color:var(--orange)}
+.stat small{color:var(--muted)}
+.progress{height:9px;background:var(--panel2);border-radius:20px;overflow:hidden;margin:10px 0}
+.progress span{display:block;height:100%;background:var(--orange);width:0}
+.notification{padding:13px;border-bottom:1px solid var(--border);line-height:1.5}
+.notification.unread{border-left:3px solid var(--orange)}
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:50;align-items:center;justify-content:center;padding:15px}
 .modal.show{display:flex}
-.box{background:#fff;color:#111;width:92%;max-width:380px;padding:22px;border-radius:16px}
-.box input{width:100%;padding:12px;margin:8px 0;border:1px solid #ddd;border-radius:10px}
-.box button{width:100%;padding:13px;background:#ff7a00;color:#fff;border:none;border-radius:10px;font-weight:900;margin-top:8px;cursor:pointer}
-.link{color:#ff7a00;cursor:pointer;font-weight:700}
-.chat{display:none;flex-direction:column;flex:1;background:#0a0a0a}
-.chat.active{display:flex}
-.msgs{flex:1;overflow:auto;padding:16px;display:flex;flex-direction:column;gap:14px}
-.m-user{align-self:flex-end;background:#8b5cf6;padding:10px 14px;border-radius:16px 16px 4px 16px;max-width:85%;font-size:14px;white-space:pre-wrap}
-.m-ai{align-self:flex-start;background:transparent;padding:2px;max-width:95%;font-size:15px;line-height:1.6;white-space:pre-wrap}
-.m-ai b{font-weight:800}.m-ai h3{font-size:16px;margin:8px 0 4px}
-.acts{display:flex;gap:0;margin-top:4px!important;padding-top:0;background:transparent!important}
-.acts button{background:transparent!important;color:#888;border:none;padding:6px 7px;border-radius:50%;font-size:15px;cursor:pointer}
-.acts button:hover{background:rgba(255,255,255,.08)!important;color:#fff}
-.acts button.liked{color:#4ade80}.acts button.disliked{color:#f87171}
-.more-menu{display:none;position:absolute;background:#2a2a2a;border-radius:10px;padding:6px;z-index:5;flex-direction:column;min-width:160px}
-.more-menu.show{display:flex}
-.more-menu button{background:transparent;color:#fff;border:none;text-align:left;padding:10px;font-size:13px;cursor:pointer}
-.wrap{position:relative}
-.input-row{display:flex;gap:8px;padding:12px;background:#111}
-.input-row input{flex:1;padding:13px;border-radius:25px;border:none;background:#222;color:#fff;outline:none}
-.input-row button{background:#ff7a00;border:none;padding:0 18px;border-radius:25px;font-size:18px;cursor:pointer;color:#fff}
-.tipsPop{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);justify-content:center;align-items:center;z-index:30}
-.tipsPop.show{display:flex}
-.tipsBox{background:#fff7e6;color:#222;padding:20px;border-radius:16px;width:90%;max-width:340px;font-size:14px;line-height:1.7}
-.tipsBox button{width:100%;padding:11px;background:#ff7a00;color:#fff;border:none;border-radius:10px;font-weight:800;margin-top:12px;cursor:pointer}
-@media(max-width:700px){.side{position:fixed;left:0;top:0;bottom:0;z-index:30}}
+.modalbox{background:var(--panel);color:var(--text);padding:22px;border-radius:17px;width:100%;max-width:390px;max-height:90vh;overflow:auto}
+.modalbox h2{margin-bottom:8px}
+.modalbox .primary{margin-top:10px}
+.hidden{display:none!important}
+.small{font-size:12px;color:var(--muted)}
+.plan{border:1px solid var(--border);padding:15px;border-radius:12px;margin:10px 0}
+.plan strong{font-size:20px;color:var(--orange)}
+@media(min-width:850px){
+ .sidebar{transform:translateX(0)}
+ .main{margin-left:275px;width:calc(100% - 275px)}
+ #menuToggle{display:none}
+}
+@media(max-width:600px){
+ .content{padding:15px}
+ .welcome{padding-top:35px}
+ .statgrid{grid-template-columns:1fr 1fr}
+}
 </style>
 </head>
+
 <body>
 <div class="app">
-<div class="side" id="sidebar"><h2>✦ Ibom<span>Nova</span></h2><button class="newbtn" onclick="startNewChat()">+ New Chat</button><div class="hist" id="histList"></div><div class="userbox"><div id="sideUser">Guest</div><button onclick="logout()">Logout</button></div></div>
-<div class="main"><div class="flag"></div><div class="top"><span class="menu" onclick="toggleSide()">☰</span><b>IbomNova AI</b><span style="width:24px"></span></div>
-<div id="landing" class="landing"><h1>Hello —<br>I'm IbomNova<br><b>for Everyone,<br>Everywhere</b></h1><div class="sub">ideas • learning • growth</div><p style="font-size:14px;line-height:1.6;opacity:.9">Chat, create, and explore with IbomNova — fast, private, and built for you. For the whole world, anytime, anywhere.</p><button class="btn btn-o" onclick="checkAuth()">Get Started</button><button class="btn btn-g" onclick="openAuth('login')">Login</button><button class="btn btn-g" onclick="openAuth('signup')">Create Account - Signup</button><div class="social"><div>🌍 Available Worldwide • 50+ Countries</div><div class="proof">⭐⭐⭐⭐⭐<br><b>Loved by 10,000+ learners, creators & startups worldwide</b></div></div></div>
-<div id="chat" class="chat"><div class="msgs" id="msgs"></div><div class="input-row"><input id="q" placeholder="Ask IbomNova anything..." onkeydown="if(event.key==='Enter')send()"><button onclick="send()">➤</button></div></div>
-</div></div>
-<div class="modal" id="authModal"><div class="box"><h2 id="authTitle">Create Account</h2><p style="font-size:13px;color:#666">Signup to save history & remember you</p><input id="aName" placeholder="Your full name"><input id="aEmail" placeholder="Email"><input id="aPass" type="password" placeholder="Password (min 4)"><button onclick="doAuth()">Continue →</button><p style="text-align:center;font-size:13px;margin-top:10px"><span id="switchText"></span></p><button onclick="closeAuth()" style="background:#eee;color:#333">Cancel</button></div></div>
-<div class="tipsPop" id="tipsPop"><div class="tipsBox"><b>💡 Support Tips</b><br><br>• Ask anything like ChatGPT<br>• "What is Uyo?"<br>• "Write email for job"<br>• "Give me business idea"<br><br>Need help? WhatsApp: <b>IbomNova Support</b><button onclick="closeTips()">Close</button></div></div>
+
+<aside class="sidebar" id="sidebar">
+ <div class="brand">✦ Ibom<span>Nova</span></div>
+ <button class="newchat" onclick="newChat()">＋ New Chat</button>
+
+ <div class="menu-title">Workspace</div>
+ <button class="menu-item active" onclick="showPage('home',this)">💬 AI Chat</button>
+ <button class="menu-item" onclick="showPage('profile',this)">👤 My Profile</button>
+ <button class="menu-item" onclick="showPage('notifications',this)">🔔 Notifications <span id="notificationBadge" class="badge hidden">0</span></button>
+ <button class="menu-item" onclick="showPage('wallet',this)">💎 My Wallet</button>
+ <button class="menu-item" onclick="showPage('settings',this)">⚙️ Settings</button>
+ <button class="menu-item" onclick="showPage('report',this)">📝 Report an Issue</button>
+
+ <div class="menu-title">Recent conversations</div>
+ <div class="history" id="history"></div>
+
+ <div class="side-user">
+  <div class="avatar" id="sideAvatar">N</div>
+  <div style="min-width:0">
+   <b id="sideName">Guest</b>
+   <div class="small" id="sideEmail">Not signed in</div>
+  </div>
+  <button class="iconbtn" onclick="logout()">⋮</button>
+ </div>
+</aside>
+
+<main class="main">
+ <header class="topbar">
+  <button class="iconbtn" id="menuToggle" onclick="toggleSidebar()">☰</button>
+  <div class="topbrand">✦ IbomNova AI</div>
+  <button class="iconbtn" onclick="showPage('profile')">👤</button>
+ </header>
+
+ <div class="content">
+
+  <section id="home" class="page active">
+   <div class="welcome" id="welcome">
+    <h1>Hello, I'm <span>IbomNova</span></h1>
+    <p>Your AI companion for learning, business, creativity and growth. For Everyone, Everywhere.</p>
+    <div class="chips">
+     <button class="chip" onclick="quickAsk('Give me a business idea')">💼 Business Plan</button>
+     <button class="chip" onclick="quickAsk('Help me build a portfolio website')">🌐 Portfolio Website</button>
+     <button class="chip" onclick="quickAsk('Teach me something useful today')">📚 Learn something</button>
+     <button class="chip" onclick="quickAsk('Give me a creative idea')">✨ Get inspired</button>
+    </div>
+   </div>
+   <div id="chat" class="chat"></div>
+  </section>
+
+  <section id="profile" class="page">
+   <h2>👤 My Profile</h2>
+   <div class="card">
+    <div class="row" style="align-items:center">
+     <div class="avatar" id="profileAvatar" style="width:75px;height:75px;font-size:25px">N</div>
+     <div>
+      <h3 id="profileDisplayName">Your profile</h3>
+      <p id="profileDisplayEmail"></p>
+     </div>
+    </div>
+    <div class="field">
+     <label>Profile picture</label>
+     <input type="file" id="photoInput" accept="image/*" onchange="uploadPhoto(event)">
+     <button class="secondary" onclick="removePhoto()">Remove picture</button>
+    </div>
+    <div class="field"><label>Full name</label><input id="profileName"></div>
+    <div class="field"><label>Email address (read only)</label><input id="profileEmail" readonly></div>
+    <div class="field"><label>About me / Bio</label><textarea id="profileBio" placeholder="Tell us a little about yourself"></textarea></div>
+    <button class="primary" onclick="saveProfile()">Save Profile</button>
+    <div class="field"><label>Change password</label><input type="password" id="newPassword" placeholder="New password"></div>
+    <button class="secondary" onclick="changePassword()">Update Password</button>
+   </div>
+   <div class="card">
+    <h3>🏆 Your Nova Journey</h3>
+    <div class="statgrid">
+     <div class="stat"><strong id="points">0</strong><small>Nova Points</small></div>
+     <div class="stat"><strong id="level">1</strong><small>Level</small></div>
+     <div class="stat"><strong id="streak">0</strong><small>Day Streak</small></div>
+    </div>
+    <p style="margin-top:14px">Progress to next level</p>
+    <div class="progress"><span id="levelProgress"></span></div>
+    <p id="levelText" class="small"></p>
+   </div>
+  </section>
+
+  <section id="notifications" class="page">
+   <div class="row"><h2>🔔 Notifications</h2><button class="secondary" onclick="markAllRead()">Mark all read</button></div>
+   <div class="card" id="notificationList"></div>
+  </section>
+
+  <section id="wallet" class="page">
+   <h2>💎 My Wallet</h2>
+   <div class="card">
+    <p>Available demo balance</p>
+    <h1 style="font-size:35px;color:var(--orange);margin:10px 0" id="balance">₦0.00</h1>
+    <p class="small">This is a demonstration wallet. No real money is stored or transferred.</p>
+    <div class="row" style="margin-top:15px">
+     <button class="primary" onclick="walletNotice('Funding')">＋ Fund Wallet</button>
+     <button class="secondary" onclick="walletNotice('Withdrawal')">Withdraw</button>
+    </div>
+   </div>
+   <div class="card">
+    <h3>Choose your plan</h3>
+    <div class="plan"><strong>FREE</strong><p>Basic access to IbomNova AI.</p><button class="secondary" onclick="choosePlan('Free')">Current free option</button></div>
+    <div class="plan"><strong>PRO</strong><p>More tools and advanced productivity features.</p><button class="primary" onclick="choosePlan('Pro')">Explore Pro</button></div>
+    <div class="plan"><strong>PREMIUM</strong><p>Premium experience for creators and businesses.</p><button class="primary" onclick="choosePlan('Premium')">Explore Premium</button></div>
+   </div>
+   <div class="card"><h3>Transaction History</h3><p id="transactions">No transactions yet.</p></div>
+   <div class="card"><h3>Payment options</h3><p>Payment integration will be added when a secure payment provider is connected.</p></div>
+  </section>
+
+  <section id="settings" class="page">
+   <h2>⚙️ Settings</h2>
+   <div class="card">
+    <h3>Account settings</h3>
+    <div class="field"><label>Name</label><input id="settingName"></div>
+    <div class="field"><label>Email</label><input id="settingEmail" readonly></div>
+    <div class="field"><label>Phone number</label><input id="settingPhone" placeholder="Your phone number"></div>
+    <button class="primary" onclick="saveSettings()">Save Account Settings</button>
+   </div>
+   <div class="card">
+    <h3>Appearance</h3>
+    <div class="field"><label>Theme</label>
+     <select id="themeSelect" onchange="setTheme(this.value)">
+      <option value="dark">Dark mode</option><option value="light">Light mode</option>
+     </select>
+    </div>
+    <div class="field"><label>Language</label>
+     <select id="languageSelect" onchange="saveLanguage(this.value)">
+      <option>English</option><option>Nigerian Pidgin</option>
+     </select>
+    </div>
+    <label><input type="checkbox" id="notifyToggle" onchange="saveNotify(this.checked)" checked> Enable notifications</label>
+   </div>
+   <div class="card">
+    <h3>Account security</h3>
+    <p>Deleting your account removes its locally stored profile and chat history from this browser.</p>
+    <button class="danger" onclick="deleteAccount()">Delete Account</button>
+   </div>
+  </section>
+
+  <section id="report" class="page">
+   <h2>📝 Report an Issue</h2>
+   <div class="card">
+    <p>Tell us what went wrong. Your report will be saved in this browser as a demo until a support server is connected.</p>
+    <div class="field"><label>Issue category</label>
+     <select id="issueCategory">
+      <option>Login or Registration</option><option>AI Chat Problem</option>
+      <option>Wallet or Payment</option><option>Profile or Settings</option>
+      <option>Other</option>
+     </select>
+    </div>
+    <div class="field"><label>Describe the issue</label><textarea id="issueText" placeholder="Explain what happened..."></textarea></div>
+    <div class="field"><label>Screenshot attachment (optional)</label><input type="file" id="issueFile" accept="image/*"></div>
+    <button class="primary" onclick="submitReport()">Send Report</button>
+   </div>
+  </section>
+
+ </div>
+
+ <div class="composer" id="composer">
+  <div class="composer-inner">
+   <input id="question" placeholder="Ask IbomNova anything..." onkeydown="if(event.key==='Enter')sendMessage()">
+   <button class="send" onclick="sendMessage()">➤</button>
+  </div>
+  <p class="small" style="text-align:center;margin-top:7px">IbomNova can make mistakes. Check important information.</p>
+ </div>
+</main>
+</div>
+
+<div class="modal" id="authModal">
+ <div class="modalbox">
+  <h2 id="authTitle">Welcome to IbomNova</h2>
+  <p class="small">Create an account or sign in to continue.</p>
+  <div id="nameField" class="field"><label>Your name</label><input id="authName" placeholder="Full name"></div>
+  <div class="field"><label>Email</label><input id="authEmail" type="email" placeholder="Email address"></div>
+  <div class="field"><label>Password</label><input id="authPassword" type="password" placeholder="At least 6 characters"></div>
+  <button class="primary" onclick="authenticate()">Continue</button>
+  <p style="margin-top:14px;font-size:13px;text-align:center" id="authSwitch"></p>
+  <button class="secondary" style="width:100%;margin-top:10px" onclick="closeAuth()">Cancel</button>
+ </div>
+</div>
+
+<div class="modal" id="confirmModal">
+ <div class="modalbox">
+  <h3 id="confirmTitle">Please confirm</h3>
+  <p id="confirmText" style="margin:12px 0;color:var(--muted)"></p>
+  <div class="row">
+   <button class="secondary" onclick="closeConfirm()">Cancel</button>
+   <button class="danger" id="confirmYes">Confirm</button>
+  </div>
+ </div>
+</div>
+
 <script>
-let mode='signup';
-let currentUser=JSON.parse(localStorage.getItem('ibom_current')||'null');
-let users=JSON.parse(localStorage.getItem('ibom_users')||'{}');
-let chats=JSON.parse(localStorage.getItem('ibom_chats')||'{}');
-let currentChatId=localStorage.getItem('ibom_currentChat')||null;
-let lastCall=0;
-
-const TRUE_FACTS={
- 'uyo':`Uyo is the capital city of Akwa Ibom State in southeastern Nigeria — NOT Abia State.\n\nKey facts:\n• Location: Uyo sits in the Niger-Delta region, about 500 km east of Lagos\n• Population: About 800,000 to 1 million people, one of Nigeria's fastest-growing cities\n• History: It became capital in 1987 when Akwa Ibom State was created\n• Known for: Godswill Akpabio Stadium, University of Uyo, Ibom Tropicana, clean city, and Akwa Ibom culture\n• People: Mainly Ibibio people, known for Afang soup, Edikang Ikong, and hospitality`,
- 'akwa ibom':`Akwa Ibom is a state in southeastern Nigeria, created on 27 September 1987. Its capital is Uyo. Known for oil, cleanest city (Uyo), and rich Ibibio culture.`,
- 'abia':`Abia State is a state in southeastern Nigeria. Its capital is Umuahia — NOT Uyo. Abia is known for Aba (commercial city) and Ariaria Market.`,
- 'umuahia':`Umuahia is the capital city of Abia State in southeastern Nigeria.`,
- 'aba':`Aba is a big commercial city in Abia State, famous for Ariaria International Market.`,
- 'lagos':`Lagos is the largest city in Nigeria. Its capital is Ikeja. Lagos is the commercial centre of Nigeria.`,
- 'abuja':`Abuja is the capital city of Nigeria, in the Federal Capital Territory. It became capital in 1991.`,
- 'onitsha':`Onitsha is a major commercial city in Anambra State, famous for Onitsha Main Market — one of the largest markets in West Africa.`,
- 'anambra':`Anambra State is in southeastern Nigeria. Its capital is Awka. Famous cities: Onitsha, Nnewi, Awka.`,
- 'port harcourt':`Port Harcourt is the capital of Rivers State, known as Garden City and oil hub.`,
- 'kano':`Kano is a major city in northern Nigeria, capital of Kano State, one of the oldest cities in West Africa.`,
- 'ibadan':`Ibadan is the capital of Oyo State in southwestern Nigeria.`,
- 'enugu':`Enugu is the capital of Enugu State, known as Coal City.`,
- 'calabar':`Calabar is the capital of Cross River State, known for Carnival Calabar.`,
- 'nigeria':`Nigeria is a country in West Africa, most populous in Africa with over 220 million people. Capital is Abuja, largest city is Lagos. It has 36 states + FCT.`
+const $ = id => document.getElementById(id);
+const read = (key, fallback) => {
+ try { return JSON.parse(localStorage.getItem(key)) ?? fallback; }
+ catch(e) { return fallback; }
 };
-function toggleSide(){document.getElementById('sidebar').classList.toggle('show')}
-function openAuth(m){mode=m;document.getElementById('authTitle').innerText=m==='signup'?'Create Account':'Welcome back 👋';document.getElementById('aName').style.display=m==='signup'?'block':'none';document.getElementById('switchText').innerHTML=m==='signup'?'Already have account? <span class="link" onclick="openAuth(\'login\')">Login</span>':'No account? <span class="link" onclick="openAuth(\'signup\')">Signup</span>';document.getElementById('authModal').classList.add('show')}
-function closeAuth(){document.getElementById('authModal').classList.remove('show')}
-function checkAuth(){if(currentUser) showChat(); else openAuth('signup')}
-function doAuth(){let name=document.getElementById('aName').value.trim();let email=document.getElementById('aEmail').value.trim().toLowerCase();let pass=document.getElementById('aPass').value;if(!email||pass.length<4) return alert('Enter valid email & password min 4');if(mode==='signup'){if(users[email]) return alert('Account don exist, please login');users[email]={name:name||email.split('@')[0],email,pass};localStorage.setItem('ibom_users',JSON.stringify(users));}else{if(!users[email]||users[email].pass!==pass) return alert('Wrong email or password');}currentUser=users[email];localStorage.setItem('ibom_current',JSON.stringify(currentUser));document.getElementById('sideUser').innerText=currentUser.name+' • '+currentUser.email;closeAuth();showChat();renderHist();}
-function logout(){localStorage.removeItem('ibom_current');currentUser=null;currentChatId=null;document.getElementById('chat').classList.remove('active');document.getElementById('landing').style.display='block';}
-function showChat(){document.getElementById('landing').style.display='none';document.getElementById('chat').classList.add('active');document.getElementById('sidebar').classList.add('show');if(currentUser) document.getElementById('sideUser').innerText=currentUser.name+' • '+currentUser.email;renderHist();if(!currentChatId||!chats[currentChatId]){currentChatId='chat_'+Date.now();localStorage.setItem('ibom_currentChat',currentChatId);chats[currentChatId]=[{role:'ai',text:`Hello ${currentUser?currentUser.name:'friend'}! 👋 I'm IbomNova — your AI assistant for Everyone, Everywhere. Ask me anything like ChatGPT!`,isWelcome:true}];saveChats();renderHist();}renderMsgs();}
-function startNewChat(){currentChatId='chat_'+Date.now();localStorage.setItem('ibom_currentChat',currentChatId);chats[currentChatId]=[{role:'ai',text:`New chat started! 👋 What do you want to ask, ${currentUser?currentUser.name:'friend'}?`,isWelcome:true}];saveChats();renderMsgs();renderHist();if(window.innerWidth<700)toggleSide();}
-function renderHist(){let h=document.getElementById('histList');h.innerHTML='';Object.keys(chats).reverse().forEach(id=>{let first=chats[id].find(m=>m.role==='user');if(!first)return;let title=first.text.slice(0,30);let d=document.createElement('div');d.innerHTML=`<span onclick="openChat('${id}')" style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${title}</span><span onclick="delChat('${id}')">🗑️</span>`;h.appendChild(d);});if(h.innerHTML==='')h.innerHTML='<div style="opacity:.6">No chats yet. Start one!</div>';}
-function openChat(id){currentChatId=id;localStorage.setItem('ibom_currentChat',id);renderMsgs();if(window.innerWidth<700)toggleSide();}
-function delChat(id){delete chats[id];saveChats();if(id===currentChatId){currentChatId=null;showChat();}else renderHist();}
-function saveChats(){localStorage.setItem('ibom_chats',JSON.stringify(chats));}
-function formatAI(text){let html=text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').replace(/###\s*(.+)/g,'<h3>$1</h3>').replace(/##\s*(.+)/g,'<h3>$1</h3>').replace(/\n- /g,'<br>• ').replace(/\n/g,'<br>');html=html.replace(/\*/g,'');return html;}
-function aiHTML(m){if(m.isWelcome) return `<div class="ai-text">${formatAI(m.text)}</div>`;return `<div class="ai-text">${formatAI(m.text)}</div><div class="wrap"><div class="acts"><button onclick="copyIcon(this)">📋</button><button onclick="likeIcon(this)">👍</button><button onclick="dislikeIcon(this)">👎</button><button onclick="speakIcon(this)">🔊</button><button onclick="shareIcon(this)">↗️</button><button onclick="toggleMore(this)">⋮</button></div><div class="more-menu"><button onclick="openTips()">💡 Support Tips</button><button onclick="copyIcon(this.closest('.m-ai').querySelector('.acts button'))">📋 Copy text</button></div></div>`;}
-function renderMsgs(){let box=document.getElementById('msgs');box.innerHTML='';if(!chats[currentChatId])return;chats[currentChatId].forEach(m=>{if(m.role==='user'){let d=document.createElement('div');d.className='m-user';d.innerText=m.text;box.appendChild(d);}else{let d=document.createElement('div');d.className='m-ai';d.innerHTML=aiHTML(m);box.appendChild(d);}});box.scrollTop=9999;}
+let users = read("ibomnova_users",{});
+let currentUser = read("ibomnova_current",null);
+let conversations = read("ibomnova_chats",{});
+let currentChat = localStorage.getItem("ibomnova_current_chat") || "";
+let authMode = "signup";
+let notifications = read("ibomnova_notifications",[]);
+let points = Number(localStorage.getItem("ibomnova_points") || 0);
+let streak = Number(localStorage.getItem("ibomnova_streak") || 0);
+let lastVisit = localStorage.getItem("ibomnova_last_visit") || "";
+let walletBalance = Number(localStorage.getItem("ibomnova_balance") || 0);
+let transactions = read("ibomnova_transactions",[]);
+let profilePhoto = localStorage.getItem("ibomnova_photo") || "";
 
-// CLEAN ANSWER - NEVER SHOW JSON ERROR
-function isBadAnswer(t){
-  if(!t) return true;
-  if(t.includes('{"success"')||t.includes('output_token_limit')||t.includes('Free limit reached')||t.includes('UpstreamError')||t.includes('exhausted its output')) return true;
-  if(t.trim().startsWith('{') && t.includes('error')) return true;
-  return false;
+function persistUser(){
+ localStorage.setItem("ibomnova_current",JSON.stringify(currentUser));
 }
-function smartLocalAnswer(q){
-  let l=q.toLowerCase();
-  if(l.includes('hello')||l==='hi'||l==='hy'||l.includes('how far')) return `Hello ${currentUser?currentUser.name:'friend'}! 😊 I dey o, I dey great. How you dey? Wetin you wan do today — learn, business, code, or gist?`;
-  if(l.includes('who are you')) return `I be IbomNova — your AI assistant for Everyone, Everywhere. I fit help you write, learn, code, plan business, and answer any question. I remember you as ${currentUser?currentUser.name:'friend'}.`;
-  if(l.includes('business')||l.includes('make money')) return `Business idea for you:\n\n1. Pick a skill — design, writing, tutoring, or selling\n2. Do 1 free sample for testimonial\n3. Post daily on TikTok + WhatsApp Status\n4. Start price ₦5k-₦20k, increase as you grow\n\nWhich one you like? I go give you full plan.`;
-  if(l.includes('email')) return `Sample Email:\n\nSubject: Application / Partnership\n\nHello,\n\nMy name is ${currentUser?currentUser.name:'Friend'}. I am writing to... I would love to work with you because...\n\nThank you.\nBest regards,\n${currentUser?currentUser.name:'Friend'}\n\nWant am formal or casual? Tell me.`;
-  if(l.includes('code')||l.includes('website')||l.includes('portfolio')) return `I go help you code! Tell me wetin you wan build — Portfolio? Landing page? Calculator? Example: "Build portfolio for photographer" and I go write the code.`;
-  return `Great question about "${q}".\n\nHere is how to handle am:\n1. Understand the main goal\n2. Break am into 3 small steps\n3. Start the smallest step today\n4. Check result and improve\n\nTell me more detail — e.g. "Give me full plan" or "Give example" — I go give you deeper answer.`;
+function saveUsers(){
+ localStorage.setItem("ibomnova_users",JSON.stringify(users));
 }
-async function getSmartAnswer(q){
-  let l=q.toLowerCase();
-  for(let key in TRUE_FACTS){ if(l.includes(key)) return TRUE_FACTS[key]; }
-  // Wikipedia - REAL FACTS, NO LIMIT
-  let match=l.match(/what is (.*)/)||l.match(/who is (.*)/)||l.match(/where is (.*)/)||l.match(/what are (.*)/);
+function emailKey(){return currentUser ? currentUser.email.toLowerCase() : ""}
+function toggleSidebar(){ $("sidebar").classList.toggle("open"); }
+function showPage(id,button){
+ document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+ $(id).classList.add("active");
+ document.querySelectorAll(".menu-item").forEach(b=>b.classList.remove("active"));
+ if(button)button.classList.add("active");
+ $("composer").style.display=id==="home"?"block":"none";
+ if(id==="profile")loadProfile();
+ if(id==="notifications")renderNotifications();
+ if(id==="wallet")renderWallet();
+ if(id==="settings")loadSettings();
+ if(window.innerWidth<850)$("sidebar").classList.remove("open");
+}
+function showAuth(mode){
+ authMode=mode;
+ $("authModal").classList.add("show");
+ $("authTitle").innerText=mode==="signup"?"Create your IbomNova account":"Welcome back";
+ $("nameField").classList.toggle("hidden",mode!=="signup");
+ $("authSwitch").innerHTML=mode==="signup"
+ ? 'Already registered? <span style="color:var(--orange);cursor:pointer" onclick="showAuth(\\'login\\')">Login</span>'
+ : 'New to IbomNova? <span style="color:var(--orange);cursor:pointer" onclick="showAuth(\\'signup\\')">Create account</span>';
+}
+function closeAuth(){$("authModal").classList.remove("show");}
+function authenticate(){
+ let name=$("authName").value.trim();
+ let email=$("authEmail").value.trim().toLowerCase();
+ let pass=$("authPassword").value;
+ if(!email.includes("@")||pass.length<6)return alert("Enter a valid email and a password of at least 6 characters.");
+ if(authMode==="signup"){
+  if(users[email])return alert("This email already has an account. Please log in.");
+  currentUser={name:name||email.split("@")[0],email,pass,bio:"",phone:""};
+  users[email]=currentUser;
+  notifications.push({text:"Welcome to IbomNova! Your journey starts here.",read:false,date:new Date().toLocaleDateString()});
+ }else{
+  if(!users[email]||users[email].pass!==pass)return alert("Incorrect email or password.");
+  currentUser=users[email];
+ }
+ saveUsers();persistUser();closeAuth();afterLogin();
+}
+function afterLogin(){
+ $("sideName").innerText=currentUser.name;
+ $("sideEmail").innerText=currentUser.email;
+ renderAvatar();
+ updateProgress();
+ renderHistory();
+ if(!currentChat||!conversations[currentChat]){
+  newChat(false);
+ }else renderChat();
+ showPage("home");
+}
+function logout(){
+ askConfirm("Log out?","Are you sure you want to log out?",()=>{
+  localStorage.removeItem("ibomnova_current");
+  currentUser=null;
+  location.reload();
+ });
+}
+function askConfirm(title,message,action){
+ $("confirmTitle").innerText=title;$("confirmText").innerText=message;
+ $("confirmModal").classList.add("show");
+ $("confirmYes").onclick=()=>{closeConfirm();action();};
+}
+function closeConfirm(){$("confirmModal").classList.remove("show");}
+
+function newChat(closeSide=true){
+ currentChat="chat_"+Date.now();
+ conversations[currentChat]=[];
+ localStorage.setItem("ibomnova_current_chat",currentChat);
+ saveChats();renderChat();renderHistory();
+ $("welcome").style.display="block";
+ if(closeSide && window.innerWidth<850)$("sidebar").classList.remove("open");
+}
+function saveChats(){localStorage.setItem("ibomnova_chats",JSON.stringify(conversations));}
+function renderHistory(){
+ let box=$("history");box.innerHTML="";
+ Object.keys(conversations).reverse().forEach(id=>{
+  let first=conversations[id].find(m=>m.role==="user");
+  if(!first)return;
+  let item=document.createElement("div");
+  item.className="history-item";
+  item.textContent=first.text.slice(0, thirty());
+  item.onclick=()=>{currentChat=id;localStorage.setItem("ibomnova_current_chat",id);renderChat();$("welcome").style.display="none";showPage("home");};
+  box.appendChild(item);
+ });
+}
+function thirty(){return 32;}
+function renderChat(){
+ let box=$("chat");box.innerHTML="";
+ (conversations[currentChat]||[]).forEach(m=>{
+  let d=document.createElement("div");
+  d.className="message "+(m.role==="user"?"user-message":"ai-message");
+  if(m.role==="user"){d.textContent=m.text;}
+  else{
+   let t=document.createElement("div");t.className="ai-text";t.textContent=m.text;d.appendChild(t);
+   let a=document.createElement("div");a.className="actions";
+   [["📋","Copy"],["👍","Like"],["👎","Dislike"],["🔊","Speak"],["↗","Share"]].forEach(([icon,label])=>{
+    let b=document.createElement("button");b.textContent=icon;b.title=label;
+    b.onclick=()=>messageAction(label,m.text);a.appendChild(b);
+   });
+   d.appendChild(a);
+  }
+  box.appendChild(d);
+ });
+ box.scrollTop=box.scrollHeight;
+}
+function messageAction(action,text){
+ if(action==="Copy")navigator.clipboard?.writeText(text).then(()=>alert("Copied."));
+ if(action==="Like")alert("Thanks for your feedback!");
+ if(action==="Dislike")alert("Thanks. We'll work to improve.");
+ if(action==="Speak"&&"speechSynthesis"in window)speechSynthesis.speak(new SpeechSynthesisUtterance(text));
+ if(action==="Share"){
+  if(navigator.share)navigator.share({title:"IbomNova AI",text});
+  else navigator.clipboard?.writeText(text).then(()=>alert("Answer copied to share."));
+ }
+}
+function quickAsk(text){$("question").value=text;sendMessage();}
+function addPoints(amount){
+ points+=amount;localStorage.setItem("ibomnova_points",points);updateProgress();
+}
+function updateProgress(){
+ let level=Math.floor(points/100)+1;
+ $("points").textContent=points;$("level").textContent=level;
+ $("streak").textContent=streak;
+ $("levelProgress").style.width=(points%100)+"%";
+ $("levelText").textContent=(100-points%100)+" points to your next level.";
+}
+function recordVisit(){
+ let today=new Date().toDateString();
+ if(lastVisit!==today){
+  let yesterday=new Date(Date.now()-86400000).toDateString();
+  streak=lastVisit===yesterday?streak+1:1;
+  lastVisit=today;
+  localStorage.setItem("ibomnova_last_visit",today);
+  localStorage.setItem("ibomnova_streak",streak);
+ }
+}
+function addNotification(text){
+ notifications.unshift({text,read:false,date:new Date().toLocaleString()});
+ localStorage.setItem("ibomnova_notifications",JSON.stringify(notifications));
+ renderNotificationBadge();
+}
+function renderNotificationBadge(){
+ let n=notifications.filter(x=>!x.read).length;
+ $("notificationBadge").textContent=n;
+ $("notificationBadge").classList.toggle("hidden",n===0);
+}
+function renderNotifications(){
+ let box=$("notificationList");box.innerHTML="";
+ if(!notifications.length){box.textContent="You're all caught up.";return;}
+ notifications.forEach((n,i)=>{
+  let d=document.createElement("div");d.className="notification "+(!n.read?"unread":"");
+  d.textContent=(n.read?"":"● ")+n.text+" — "+n.date;box.appendChild(d);
+ });
+}
+function markAllRead(){
+ notifications.forEach(n=>n.read=true);
+ localStorage.setItem("ibomnova_notifications",JSON.stringify(notifications));
+ renderNotifications();renderNotificationBadge();
+}
+
+async function getAnswer(q){
+ let l=q.toLowerCase();
+ const facts={
+  "uyo":"Uyo is the capital city of Akwa Ibom State in southeastern Nigeria. It is known for its hospitality, culture, University of Uyo and Godswill Akpabio International Stadium.",
+  "akwa ibom":"Akwa Ibom is a state in southeastern Nigeria. Its capital is Uyo. It is known for its coastal communities, oil and gas industry, Ibibio culture and rich cuisine.",
+  "abia":"Abia State is in southeastern Nigeria. Its capital is Umuahia, while Aba is a major commercial centre.",
+  "nigeria":"Nigeria is a country in West Africa. Its capital is Abuja and it has 36 states and the Federal Capital Territory."
+ };
+ for(let key in facts)if(l.includes(key))return facts[key];
+ try{
+  let match=l.match(/(?:what is|who is|where is|what are) (.+)/);
   if(match){
-    let topic=match[1].replace(/\?/g,'').trim();
-    try{
-      let r=await fetch('https://en.wikipedia.org/api/rest_v1/page/summary/'+encodeURIComponent(topic));
-      let j=await r.json();
-      if(j.extract && j.extract.length>60 && !isBadAnswer(j.extract)) return j.extract;
-    }catch(e){}
-    // DuckDuckGo backup
-    try{
-      let r2=await fetch('https://api.duckduckgo.com/?q='+encodeURIComponent(topic)+'&format=json&no_html=1');
-      let j2=await r2.json();
-      if(j2.AbstractText && j2.AbstractText.length>60) return j2.AbstractText;
-    }catch(e){}
+   let topic=match[1].replace(/[?]/g,"").trim();
+   let r=await fetch("https://en.wikipedia.org/api/rest_v1/page/summary/"+encodeURIComponent(topic));
+   let j=await r.json();
+   if(j.extract&&j.extract.length>50)return j.extract;
   }
-  // Pollinations - SHORT prompt to avoid token limit, with wait
-  try{
-    let now=Date.now();
-    if(now-lastCall<2000){ await new Promise(r=>setTimeout(r,2000)); }
-    lastCall=Date.now();
-    let shortQ=q.slice(0,200);
-    let res=await fetch('https://text.pollinations.ai/'+encodeURIComponent('Answer briefly, max 150 words: '+shortQ)+'?model=mistral');
-    let ans=await res.text();
-    if(!isBadAnswer(ans) && ans.length>10) return ans;
-  }catch(e){}
-  return smartLocalAnswer(q);
+ }catch(e){}
+ try{
+  let url="https://text.pollinations.ai/"+encodeURIComponent("Answer this question clearly and helpfully in under 180 words: "+q);
+  let r=await fetch(url);
+  let t=await r.text();
+  if(t&&t.length>15&&!t.includes("UpstreamError")&&!t.trim().startsWith("{"))return t.trim();
+ }catch(e){}
+ if(l.includes("hello")||l==="hi")return "Hello! 👋 Welcome to IbomNova. How can I help you today?";
+ if(l.includes("business"))return "Let's build your business idea. Start by identifying a problem people will pay to solve, choose your target customers, calculate your costs, and test your idea on a small scale. Tell me your business idea and location for a practical plan.";
+ if(l.includes("website")||l.includes("code"))return "I can help you plan and write website code. Tell me what kind of website you want to build and what features it should have.";
+ return "Thank you for your question. I may not have a live answer right now, but I can still help you think it through. Please give me a little more detail about what you want to know.";
 }
-async function send(){
-  let inp=document.getElementById('q');let q=inp.value.trim();if(!q)return;
-  if(!chats[currentChatId]){currentChatId='chat_'+Date.now();chats[currentChatId]=[];}
-  chats[currentChatId].push({role:'user',text:q});inp.value='';renderMsgs();saveChats();renderHist();
-  let typing=document.createElement('div');typing.className='m-ai';typing.id='typing';typing.innerText='IbomNova is typing...';document.getElementById('msgs').appendChild(typing);
-  try{
-    let ans=await getSmartAnswer(q);
-    document.getElementById('typing')?.remove();
-    if(isBadAnswer(ans)) ans=smartLocalAnswer(q);
-    chats[currentChatId].push({role:'ai',text:ans,isWelcome:false});saveChats();renderMsgs();renderHist();
-  }catch(e){
-    document.getElementById('typing')?.remove();
-    chats[currentChatId].push({role:'ai',text:smartLocalAnswer(q),isWelcome:false});saveChats();renderMsgs();
-  }
+async function sendMessage(){
+ if(!currentUser){showAuth("signup");return;}
+ let input=$("question"),q=input.value.trim();if(!q)return;
+ if(!currentChat)newChat(false);
+ conversations[currentChat].push({role:"user",text:q});
+ input.value="";$("welcome").style.display="none";renderChat();
+ let wait=document.createElement("div");wait.className="message ai-message";wait.id="typing";wait.textContent="IbomNova is thinking...";
+ $("chat").appendChild(wait);
+ try{
+  let answer=await getAnswer(q);
+  $("typing")?.remove();
+  conversations[currentChat].push({role:"ai",text:answer});
+  saveChats();renderChat();renderHistory();addPoints(5);
+ }catch(e){
+  $("typing")?.remove();
+  conversations[currentChat].push({role:"ai",text:"Sorry, something went wrong. Please try again."});
+  saveChats();renderChat();
+ }
 }
-function copyIcon(b){let t=b.closest('.m-ai').querySelector('.ai-text').innerText;navigator.clipboard.writeText(t);b.innerText='✅';setTimeout(()=>b.innerText='📋',1200);}
-function likeIcon(b){b.classList.toggle('liked');b.parentElement.children[2].classList.remove('disliked');}
-function dislikeIcon(b){b.classList.toggle('disliked');b.parentElement.children[1].classList.remove('liked');if(b.classList.contains('disliked')){chats[currentChatId].push({role:'ai',text:'Sorry 🙏 How I fit answer am better? Tell me more detail.',isWelcome:false});saveChats();renderMsgs();}}
-function speakIcon(b){let t=b.closest('.m-ai').querySelector('.ai-text').innerText;speechSynthesis.speak(new SpeechSynthesisUtterance(t));}
-function shareIcon(b){let t=b.closest('.m-ai').querySelector('.ai-text').innerText;if(navigator.share)navigator.share({text:t,title:'IbomNova'});else{navigator.clipboard.writeText(t);b.innerText='✅';}}
-function toggleMore(b){let m=b.closest('.wrap').querySelector('.more-menu');m.classList.toggle('show');}
-function openTips(){document.getElementById('tipsPop').classList.add('show');}
-function closeTips(){document.getElementById('tipsPop').classList.remove('show');}
-if(currentUser) document.getElementById('sideUser').innerText=currentUser.name+' • '+currentUser.email;
+
+function loadProfile(){
+ if(!currentUser)return;
+ $("profileName").value=currentUser.name||"";
+ $("profileEmail").value=currentUser.email;
+ $("profileBio").value=currentUser.bio||"";
+ $("profileDisplayName").textContent=currentUser.name;
+ $("profileDisplayEmail").textContent=currentUser.email;
+ renderAvatar();updateProgress();
+}
+function renderAvatar(){
+ let ids=["sideAvatar","profileAvatar"];
+ ids.forEach(id=>{
+  let el=$(id);if(!el)return;
+  el.innerHTML="";
+  if(profilePhoto){let img=document.createElement("img");img.src=profilePhoto;el.appendChild(img);}
+  else el.textContent=(currentUser?.name||"N").charAt(0).toUpperCase();
+ });
+}
+function uploadPhoto(event){
+ let file=event.target.files[0];if(!file)return;
+ if(file.size>1500000)return alert("Please choose an image smaller than 1.5MB.");
+ let reader=new FileReader();
+ reader.onload=()=>{
+  profilePhoto=reader.result;localStorage.setItem("ibomnova_photo",profilePhoto);renderAvatar();
+ };
+ reader.readAsDataURL(file);
+}
+function removePhoto(){
+ profilePhoto="";localStorage.removeItem("ibomnova_photo");renderAvatar();
+}
+function saveProfile(){
+ if(!currentUser)return;
+ currentUser.name=$("profileName").value.trim()||currentUser.name;
+ currentUser.bio=$("profileBio").value.trim();
+ users[emailKey()]=currentUser;saveUsers();persistUser();
+ $("sideName").textContent=currentUser.name;
+ $("profileDisplayName").textContent=currentUser.name;
+ alert("Profile saved successfully.");
+}
+function changePassword(){
+ let p=$("newPassword").value;
+ if(p.length<6)return alert("Password must have at least 6 characters.");
+ currentUser.pass=p;users[emailKey()]=currentUser;saveUsers();persistUser();
+ $("newPassword").value="";alert("Password updated on this browser.");
+}
+function loadSettings(){
+ $("settingName").value=currentUser?.name||"";
+ $("settingEmail").value=currentUser?.email||"";
+ $("settingPhone").value=currentUser?.phone||"";
+ $("themeSelect").value=localStorage.getItem("ibomnova_theme")||"dark";
+ $("languageSelect").value=localStorage.getItem("ibomnova_language")||"English";
+ $("notifyToggle").checked=localStorage.getItem("ibomnova_notify")!=="false";
+}
+function saveSettings(){
+ currentUser.name=$("settingName").value.trim()||currentUser.name;
+ currentUser.phone=$("settingPhone").value.trim();
+ users[emailKey()]=currentUser;saveUsers();persistUser();
+ $("sideName").textContent=currentUser.name;alert("Settings saved.");
+}
+function setTheme(value){
+ document.body.classList.toggle("light",value==="light");
+ localStorage.setItem("ibomnova_theme",value);
+}
+function saveLanguage(value){
+ localStorage.setItem("ibomnova_language",value);
+ alert("Language preference saved. Some translations may require a future update.");
+}
+function saveNotify(value){localStorage.setItem("ibomnova_notify",String(value));}
+function deleteAccount(){
+ askConfirm("Delete account?","This will remove your local account and chat data from this browser. This cannot be undone.",()=>{
+  let email=emailKey();delete users[email];delete conversations;
+  localStorage.removeItem("ibomnova_current");
+  localStorage.removeItem("ibomnova_users");
+  localStorage.removeItem("ibomnova_chats");
+  localStorage.removeItem("ibomnova_current_chat");
+  localStorage.removeItem("ibomnova_photo");
+  alert("Local account data cleared.");location.reload();
+ });
+}
+function renderWallet(){
+ $("balance").textContent="₦"+walletBalance.toFixed(2);
+ $("transactions").innerHTML=transactions.length?transactions.map(t=>t).join("<br>"):"No transactions yet.";
+}
+function walletNotice(type){
+ alert(type+" is not active yet. Secure payment and banking integration must be connected before real transactions can take place.");
+}
+function choosePlan(plan){
+ alert(plan+" plan selected. Online subscription and payment processing will be connected in a future update.");
+}
+function submitReport(){
+ let category=$("issueCategory").value;
+ let description=$("issueText").value.trim();
+ if(!description)return alert("Please describe the issue first.");
+ let reports=read("ibomnova_reports",[]);
+ reports.push({category,description,date:new Date().toLocaleString()});
+ localStorage.setItem("ibomnova_reports",JSON.stringify(reports));
+ $("issueText").value="";
+ alert("Your report has been saved on this device. It has not yet been sent to a support team because the support server is not connected.");
+}
+
+(function init(){
+ let theme=localStorage.getItem("ibomnova_theme")||"dark";
+ setTheme(theme);
+ renderNotificationBadge();
+ if(currentUser){
+  recordVisit();afterLogin();
+ }else{
+  $("composer").style.display="block";
+  $("welcome").style.display="block";
+ }
+})();
 </script>
 </body>
 </html>
