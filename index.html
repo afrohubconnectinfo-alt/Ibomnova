@@ -76,7 +76,6 @@ body.light .proof{background:#eee}
 .m-user{align-self:flex-end;background:#ff7a00;padding:10px 14px;border-radius:16px 16px 4px 16px;max-width:85%;font-size:14px;white-space:pre-wrap}
 .m-ai{align-self:flex-start;padding:2px;max-width:95%;font-size:15px;line-height:1.6;white-space:pre-wrap}
 .m-ai b{font-weight:800}
-/* VERIFIED + SOURCES LIKE META AI */
 .verify-box{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:10px 12px;margin-bottom:8px;font-size:13px}
 .verify-box .step{display:flex;gap:8px;align-items:center;margin:4px 0}
 .verify-box .check{color:#4ade80;font-weight:900}
@@ -149,7 +148,7 @@ body.light #scrollDownBtn{background:#fff;color:#111}
 <button class="newbtn" onclick="startNewChat()">+ New Chat</button>
 <div style="font-size:13px;opacity:.7;margin-bottom:8px">Recent Chats <span style="color:#ff7a00;cursor:pointer" onclick="clearOldChats()">• Clear Old</span></div>
 <div class="hist" id="histList"></div>
-<div class="version">v2.2.0 • IbomNova AI • Verified Facts<br>🔥 <span id="streakText">0 days streak</span> • <span id="levelText">Level: Beginner</span></div>
+<div class="version">v2.3.0 • IbomNova AI • Verified Facts<br>🔥 <span id="streakText">0 days streak</span> • <span id="levelText">Level: Beginner</span></div>
 </div>
 <div class="main"><div class="flag"></div>
 <div id="landingHeader" class="chat-header" style="display:none"><span class="menu" onclick="toggleSide()">☰</span><img id="landAvatar" src="https://via.placeholder.com/100?text=👤" onclick="openProfile()"><div class="head-info" onclick="openProfile()"><b id="landName">Guest</b><small><i></i> IbomNova • Online</small></div></div>
@@ -174,7 +173,7 @@ let mode='signup';
 let currentUser=JSON.parse(localStorage.getItem('ibom_current')||'null');
 let users=JSON.parse(localStorage.getItem('ibom_users')||'{}');
 let chats=JSON.parse(localStorage.getItem('ibom_chats')||'{}');
-(function cleanOld(){let changed=false;Object.keys(chats).forEach(id=>{chats[id]=chats[id].filter(m=>{let t=m.text||'';if(t.includes('Type am like')||t.includes('I hear you:')||t.includes('If na business')||t.includes('fishing')||t.includes('played rugby')||t.includes('tech startup that built mobile')){changed=true;return false;}return true;});});if(changed){localStorage.setItem('ibom_chats',JSON.stringify(chats));} })();
+(function cleanOld(){let changed=false;Object.keys(chats).forEach(id=>{chats[id]=chats[id].filter(m=>{let t=m.text||'';if(t.includes('Explained Clearly')||t.includes('is an important topic')||t.includes('Type am like')||t.includes('fishing with his father')||t.includes('played rugby')){changed=true;return false;}return true;});});if(changed){localStorage.setItem('ibom_chats',JSON.stringify(chats));} })();
 let currentChatId=localStorage.getItem('ibom_currentChat')||null;
 let wallet=JSON.parse(localStorage.getItem('ibom_wallet')||'{"bal":1000,"plan":"Free","tx":[]}');
 let notifs=JSON.parse(localStorage.getItem('ibom_notifs')||'[{"t":"Your Business Plan is ready","d":"Tap to view your project","time":"2h ago","read":false},{"t":"New IbomNova Update","d":"Verified facts are now live!","time":"Yesterday","read":false},{"t":"Subscription Reminder","d":"Your Pro trial ends in 2 days","time":"2 days ago","read":false}]');
@@ -217,7 +216,6 @@ function saveSettings(){let n=document.getElementById('setName').value.trim();if
 function deleteAccount(){if(confirm('Delete your account forever?')){delete users[currentUser.email];localStorage.setItem('ibom_users',JSON.stringify(users));logout();toast('Account deleted');}}
 function openReport(){document.getElementById('reportModal').classList.add('show');}
 function sendReport(){let t=document.getElementById('repText').value.trim();if(!t) return toast('Type the issue first');let cat=document.getElementById('repCat').value;notifs.unshift({t:`Report sent: ${cat}`,d:t.slice(0,40),time:'Just now',read:false});localStorage.setItem('ibom_notifs',JSON.stringify(notifs));updateSidebar();closeModal('reportModal');document.getElementById('repText').value='';toast('✅ Thank you! The IbomNova Team will reply you soon.');}
-// CLEANER
 function formatAI(t){
 let s=String(t||'');s=s.replace(/\r/g,'');
 let lines=s.split('\n');let out=[];
@@ -228,12 +226,7 @@ s=s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');s=s.replace(
 function scrollToBottom(smooth){let box=document.getElementById('msgs');if(!box) return;if(smooth) box.scrollTo({top:box.scrollHeight,behavior:'smooth'});else box.scrollTop=box.scrollHeight;document.getElementById('scrollDownBtn').classList.remove('show');}
 function checkScrollBtn(){let box=document.getElementById('msgs');let btn=document.getElementById('scrollDownBtn');if(!box||!btn) return;let far=box.scrollHeight - box.scrollTop - box.clientHeight;if(far>250) btn.classList.add('show');else btn.classList.remove('show');}
 document.getElementById('msgs').addEventListener('scroll',checkScrollBtn);
-function renderSourcesHTML(sources){
-if(!sources||!sources.length) return '';
-let html='<div class="sources"><b>Sources</b>';
-sources.forEach(s=>{html+=`<a href="${s.url}" target="_blank">🌐 ${s.name}</a>`});
-html+='</div>';return html;
-}
+function renderSourcesHTML(sources){if(!sources||!sources.length) return '';let html='<div class="sources"><b>Sources</b>';sources.forEach(s=>{html+=`<a href="${s.url}" target="_blank">🌐 ${s.name}</a>`});html+='</div>';return html;}
 function renderMsgs(){
 let box=document.getElementById('msgs');box.innerHTML='';
 let uname=currentUser?currentUser.name:'Guest';let av=profile.avatar||'https://via.placeholder.com/100?text=👤';
@@ -244,8 +237,8 @@ if(m.role==='user'){let d=document.createElement('div');d.className='m-user';d.i
 else{
 let d=document.createElement('div');d.className='m-ai';
 let extra='';
-if(m.verified){extra=`<div class="verified-badge">✅ Verified Fact</div>`;}
-if(m.steps){extra+=`<div class="verify-box"><b>Steps</b>${m.steps.map(s=>`<div class="step"><span class="check">✓</span> ${s}</div>`).join('')}</div>`;}
+if(m.verified){extra+=`<div class="verified-badge">✅ Verified Fact</div>`;}
+if(m.steps && m.steps.length>0){extra+=`<div class="verify-box"><b>Steps</b>${m.steps.map(s=>`<div class="step"><span class="check">✓</span> ${s}</div>`).join('')}</div>`;}
 d.innerHTML=`${extra}<div>${formatAI(m.text)}</div>${renderSourcesHTML(m.sources)}<div class="acts"><button onclick="copyIcon(this)">📋</button><button onclick="likeIcon(this)">👍</button><button onclick="dislikeIcon(this)">👎</button><button onclick="speakIcon(this)">🔊</button></div>`;
 box.appendChild(d);
 }});
@@ -264,67 +257,74 @@ function pickLocation(){closeAttach();if(navigator.geolocation){navigator.geoloc
 function pickContact(){closeAttach();toast('👤 Contact: type name & number');}
 function openCamera(){closeAttach();document.getElementById('galleryInput').click()}
 function createProject(type){closeAttach();let prompts={'Business':`Give me a full Business Plan — name, what to sell, how much to start, how to get customers in Nigeria, and 30 days plan.`,'Portfolio Website':`Create a beautiful Portfolio Website for me with HTML/CSS — Home, About, Projects, Contact.`,'CV / Resume':`Create a professional CV for me — Name: Coach Imoh`,'School Assignment':`Help me do my School Assignment — explain it step by step, give me a good answer my teacher will like.`};document.getElementById('q').value=prompts[type];send();}
-// ===== VERIFIED FACTS DATABASE - NEVER INVENT =====
+// ===== VERIFIED FACTS - FUZZY MATCH, NEVER GENERIC FOR PEOPLE =====
 const VERIFIED_PEOPLE={
-'tinubu':{name:'Bola Ahmed Tinubu',answer:`**Bola Ahmed Tinubu** is the current President of Nigeria.\n\n**Full name:** Bola Ahmed Adekunle Tinubu\n**Born:** 29 March 1952, in Lagos, Nigeria\n**Mother:** Abibatu Mogaji, the Iyaloja of Lagos\n**Education:** St. John's Primary School, Aroloya, Lagos; Children's Home School, Ibadan; Richard J. Daley College, Chicago; Chicago State University — graduated in 1979 with a BSc in Accounting\n**Career before politics:** Accountant for Arthur Andersen, Deloitte, and GTE Services in America. After returning to Nigeria in 1983, he joined Mobil Oil Nigeria and became a company executive.\n**Political career:**\n1. Senator for Lagos West in 1992\n2. Governor of Lagos State from 1999 to 2007\n3. Helped form the All Progressives Congress (APC) in 2013\n4. President of Nigeria since 29 May 2023 — the 16th President\n\nHe did NOT grow up fishing, did NOT study computer science, did NOT play rugby, and did NOT run a tech startup. Those stories are false.`,sources:[{name:'nigerianembassy.co.il',url:'https://www.nigerianembassy.co.il'},{name:'blackpast.org',url:'https://www.blackpast.org'},{name:'en.wikipedia.org - Bola Tinubu',url:'https://en.wikipedia.org/wiki/Bola_Tinubu'}]},
-'buhari':{name:'Muhammadu Buhari',answer:`**Muhammadu Buhari** was President of Nigeria from 2015 to 2023.\n\n**Born:** 17 December 1942, Daura, Katsina State\n**Career:** Former military Head of State from 1983 to 1985, then elected President in 2015 and re-elected in 2019.\n**Known for:** Anti-corruption campaign and security efforts.`,sources:[{name:'en.wikipedia.org - Muhammadu Buhari',url:'https://en.wikipedia.org/wiki/Muhammadu_Buhari'}]},
-'obi':{name:'Peter Obi',answer:`**Peter Obi** is a Nigerian politician and businessman.\n\n**Born:** 19 July 1961, Onitsha, Anambra State\n**Career:** Governor of Anambra State from 2006 to 2014, Labour Party presidential candidate in the 2023 election.\n**Known for:** Prudence, education, and youth support.`,sources:[{name:'en.wikipedia.org - Peter Obi',url:'https://en.wikipedia.org/wiki/Peter_Obi'}]},
-'atiniku':{name:'Atiku Abubakar',answer:`**Atiku Abubakar** is a Nigerian politician and businessman.\n\n**Born:** 25 November 1946, Jada, Adamawa State\n**Career:** Vice President of Nigeria from 1999 to 2007 under Olusegun Obasanjo, PDP presidential candidate in 2019 and 2023.`,sources:[{name:'en.wikipedia.org - Atiku Abubakar',url:'https://en.wikipedia.org/wiki/Atiku_Abubakar'}]},
-'wike':{name:'Nyesom Wike',answer:`**Nyesom Wike** is a Nigerian politician.\n\n**Born:** 13 December 1967, Rumuepirikom, Rivers State\n**Career:** Governor of Rivers State from 2015 to 2023, Minister of the Federal Capital Territory since 2023.`,sources:[{name:'en.wikipedia.org - Nyesom Wike',url:'https://en.wikipedia.org/wiki/Nyesom_Wike'}]}
+'tinubu':{name:'Bola Ahmed Tinubu',answer:`**Bola Ahmed Tinubu** is the current President of Nigeria.\n\n**Full name:** Bola Ahmed Adekunle Tinubu\n**Born:** 29 March 1952, in Lagos, Nigeria\n**Mother:** Abibatu Mogaji, the Iyaloja of Lagos\n**Education:** St. John's Primary School, Aroloya, Lagos; Children's Home School, Ibadan; Richard J. Daley College, Chicago; Chicago State University — graduated in 1979 with a BSc in Accounting\n**Career before politics:** Accountant for Arthur Andersen, Deloitte, and GTE Services in America. After returning to Nigeria in 1983, he joined Mobil Oil Nigeria and became a company executive.\n**Political career:**\n1. Senator for Lagos West in 1992\n2. Governor of Lagos State from 1999 to 2007\n3. Helped form the All Progressives Congress (APC) in 2013\n4. President of Nigeria since 29 May 2023 — the 16th President`,sources:[{name:'nigerianembassy.co.il',url:'https://www.nigerianembassy.co.il'},{name:'blackpast.org',url:'https://www.blackpast.org'},{name:'en.wikipedia.org - Bola Tinubu',url:'https://en.wikipedia.org/wiki/Bola_Tinubu'}]},
+'buhari':{name:'Muhammadu Buhari',answer:`**Muhammadu Buhari** was President of Nigeria from 2015 to 2023.\n\n**Born:** 17 December 1942, Daura, Katsina State\n**Career:** Former military Head of State from 1983 to 1985, then elected President in 2015 and re-elected in 2019.`,sources:[{name:'en.wikipedia.org - Muhammadu Buhari',url:'https://en.wikipedia.org/wiki/Muhammadu_Buhari'}]},
+'obi':{name:'Peter Obi',answer:`**Peter Obi** is a Nigerian politician and businessman.\n\n**Born:** 19 July 1961, Onitsha, Anambra State\n**Career:** Governor of Anambra State from 2006 to 2014, Labour Party presidential candidate in 2023.`,sources:[{name:'en.wikipedia.org - Peter Obi',url:'https://en.wikipedia.org/wiki/Peter_Obi'}]},
+'atiku':{name:'Atiku Abubakar',answer:`**Atiku Abubakar** is a Nigerian politician and businessman.\n\n**Born:** 25 November 1946, Jada, Adamawa State\n**Career:** Vice President of Nigeria from 1999 to 2007, PDP presidential candidate in 2019 and 2023.`,sources:[{name:'en.wikipedia.org - Atiku Abubakar',url:'https://en.wikipedia.org/wiki/Atiku_Abubakar'}]}
 };
 function correctSpelling(q){
-let l=q.toLowerCase();
-if(l.includes('tunibu')||l.includes('tinubu')||l.includes('tinobu')||l.includes('tunubu')) return 'tinubu';
+let l=q.toLowerCase().replace(/[^a-z ]/g,' ');
+// FUZZY: any word that looks like tunibu / tinubu / tinobu / tunubu / tinubo / tunubo
+let words=l.split(/\s+/);
+for(let w of words){
+if(w.length>=5 && (w.includes('tun')||w.includes('tin')) && w.includes('bu')) return 'tinubu';
+if(w==='tunibu'||w==='tinubu'||w==='tinobu'||w==='tunubu'||w==='tinubo') return 'tinubu';
+}
+if(l.includes('tunibu')||l.includes('tinubu')||l.includes('tunubu')||l.includes('tinobu')) return 'tinubu';
 if(l.includes('buhari')) return 'buhari';
-if(l.includes('peter obi')||l==='obi') return 'obi';
-if(l.includes('atiku')) return 'atiniku';
-if(l.includes('wike')) return 'wike';
+if(l.includes('peter obi')||l.trim()==='obi') return 'obi';
+if(l.includes('atiku')) return 'atiku';
 return null;
 }
-function isBad(t){if(!t) return true;let s=String(t).trim();if(s.startsWith('{')||s.includes('"status"')||s.includes('NOT_FOUND')||s.includes('pollinations')||s.includes('Classic API')||s.includes('mistral')||s.includes('timestamp')||s.includes('I hear you:')||s.includes('Type am like')||s.includes('fishing with his father')||s.includes('played rugby')||s.includes('tech startup')) return true;return false;}
+function isBad(t){if(!t) return true;let s=String(t).trim();if(s.startsWith('{')||s.includes('"status"')||s.includes('NOT_FOUND')||s.includes('pollinations')||s.includes('Classic API')||s.includes('mistral')||s.includes('Explained Clearly')||s.includes('is an important topic')||s.includes('fishing with his father')||s.includes('played rugby')) return true;return false;}
 function cleanAI(t){if(isBad(t)) return null;let c=String(t).trim();if(c.length<15) return null;return c;}
 function getContext(){let arr=chats[currentChatId]||[];return arr.filter(m=>m.role==='user').slice(-3).map(m=>m.text).join(' | ');}
 function englishBrain(q){
-let l=q.toLowerCase();let name=currentUser?currentUser.name:'Coach Imoh';let topic=q.replace(/[?!.]/g,'').trim();let ctx=getContext().toLowerCase();
-if(l.includes('@')&&l.includes('.com')) return {text:`Perfect, I have your email: ${q.trim()}\n\nHere is an amazing content idea you can send from that email:\n\nSubject: 3 Ideas That Can Change Your Week\n\nHello,\n\nI wanted to share something powerful with you today.\n\n1. Behind the Scenes: People love to see how real work is done. Share a short video or photo of your daily work.\n2. Limited-Time Offer: Give your readers a 48-hour special offer. Scarcity makes people act fast.\n3. Customer Story: Share a real story of someone you helped. Stories sell more than adverts.\n\nCall to Action: Reply to this email and tell me which idea you liked most.\n\nWant me to write the full email for your business or your customers? Just say "write it for my business".`,sources:[],verified:false};
-if(l.includes('content idea')||l.includes('amazing content')||ctx.includes('content')) return {text:`Here are 3 amazing content ideas you can send by email right now:\n\n1. Behind the Scenes\nPeople love exclusive looks. Share a short video or photo showing a day in your office.\n\n2. Limited-Time Offer\nScarcity drives action. Offer a 48-hour discount.\nHeadline: 48 Hours Only - 20% Off\n\n3. Customer Story\nShare a real story of a customer you helped. Stories build trust faster than adverts.\n\nHow to pick one:\nIf you want more sales, pick the discount. If you want more sign-ups, pick the story.`,sources:[],verified:false};
-if(l.includes('cv')||l.includes('resume')) return {text:`Coach Imoh\nUyo, Akwa Ibom • coachimoh101@gmail.com\n\nPROFESSIONAL SUMMARY\nPassionate and results-oriented coach with over 5 years of experience in coaching, business, and personal development. Skilled at developing personalized training plans, building strong teams, and helping people achieve measurable results.\n\nCORE SKILLS\nBusiness Coaching, Leadership Training, Public Speaking, Content Creation, Team Building, Marketing\n\nEXPERIENCE\nBusiness and Life Coach - Self Employed\nHelped individuals and small businesses set goals, grow their income, and improve productivity.\n\nWant me to add your phone number or the job you are applying for?`,sources:[],verified:false};
-if(l.includes('house plan')||l.includes('house')) return {text:`House Plan for You - Complete Guide\n\n1. Choose Your House Type\n2-Bedroom Bungalow - 8M - 15M Naira\n3-Bedroom Bungalow - 12M - 22M Naira\n1 Room Self-Contain - 1.5M - 3M Naira\n\n2. Standard 3-Bedroom Plan\nLiving Room: 4m x 5m, Master Bedroom: 4m x 4m with toilet, Bedroom 2 and 3: 3.5m x 3.5m, Kitchen: 3m x 3m\n\n3. Building Stages\n1. Land + Survey + Plan\n2. Foundation\n3. Block Work to Lintel\n4. Roofing\n5. Plastering, Wiring, Plumbing\n6. Tiling, Painting, Finishing`,sources:[],verified:false};
-if(l.includes('business')||l.includes('make money')) return {text:`3 Profitable Business Ideas for You in Nigeria:\n\n1. Online Selling\nStart: 20,000 - 50,000 Naira. Sell on WhatsApp, TikTok, Instagram.\n\n2. Content and Design Services\nLearn Canva, design flyers. Charge 3,000 - 10,000 Naira per design.\n\n3. Food Business\nPuff puff, meat pie, shawarma. Low start, daily cash.\n\nTell me which one you like, and I will write a full 30-day plan.`,sources:[],verified:false};
-if(l.includes('happy new week')) return {text:`Happy New Week, ${name}!\n\nMake this week count:\n\n1. One Goal: Pick ONE thing you want to finish this week.\n2. One Action Daily: Do at least one small step every day.\n3. One Win: Celebrate small wins.\n\nPrayer: May this week bring you favour, good customers, good health, and open doors.`,sources:[],verified:false};
-if(l.includes('who are you')) return {text:`I am IbomNova - your AI assistant for Everyone, Everywhere.\n\nI can help you with business plans, school work, coding, emails, CVs, house plans, creative writing, and general knowledge. I now show sources for facts, just like Meta AI.`,sources:[],verified:false};
-return {text:`${topic.charAt(0).toUpperCase()+topic.slice(1)} - Explained Clearly\n\nWhat it is:\n${topic} is an important topic that many people want to understand better.\n\nWhy it matters:\nUnderstanding ${topic} helps you make better decisions and grow faster.\n\nHow to do it:\n1. Start with the basics\n2. Look at real examples\n3. Take action - start small\n4. Stay consistent\n\nTell me - do you want a full plan, an example, or a step-by-step guide for ${topic}?`,sources:[],verified:false};
+let l=q.toLowerCase();let name=currentUser?currentUser.name:'Coach Imoh';let ctx=getContext().toLowerCase();
+if(l.includes('@')&&l.includes('.com')) return {text:`Perfect, I have your email: ${q.trim()}\n\nHere is an amazing content idea:\n\nSubject: 3 Ideas That Can Change Your Week\n\n1. Behind the Scenes: Share a short video of your daily work.\n2. Limited-Time Offer: 48-hour special offer.\n3. Customer Story: Share a real story of someone you helped.`,sources:[],verified:false};
+if(l.includes('content idea')||ctx.includes('content')) return {text:`Here are 3 amazing content ideas:\n\n1. Behind the Scenes - Share a video of your office.\n2. Limited-Time Offer - 48 Hours Only - 20% Off\n3. Customer Story - Share a real story of a customer you helped.`,sources:[],verified:false};
+if(l.includes('cv')||l.includes('resume')) return {text:`Coach Imoh\nUyo, Akwa Ibom • coachimoh101@gmail.com\n\nPROFESSIONAL SUMMARY\nPassionate coach with over 5 years of experience in coaching, business, and personal development.\n\nCORE SKILLS\nBusiness Coaching, Leadership, Public Speaking, Content Creation`,sources:[],verified:false};
+if(l.includes('house plan')||l.includes('house')) return {text:`House Plan - Complete Guide\n\n1. 2-Bedroom Bungalow - 8M - 15M Naira\n2. 3-Bedroom Bungalow - 12M - 22M Naira\n3. 1 Room Self-Contain - 1.5M - 3M Naira\n\nBuilding Stages: Land, Foundation, Block Work, Roofing, Plastering, Finishing`,sources:[],verified:false};
+if(l.includes('business')) return {text:`3 Profitable Business Ideas:\n\n1. Online Selling - Start 20k - 50k\n2. Design Services - Charge 3k - 10k per design\n3. Food Business - Puff puff, meat pie, shawarma`,sources:[],verified:false};
+if(l.includes('happy new week')) return {text:`Happy New Week, ${name}!\n\n1. One Goal: Pick ONE thing to finish this week.\n2. One Action Daily: Do one small step every day.\n3. One Win: Celebrate small wins.`,sources:[],verified:false};
+if(l.includes('who are you')) return {text:`I am IbomNova - your AI assistant for Everyone, Everywhere. I help with business, school, coding, emails, CVs, house plans, and general knowledge. I show sources for facts.`,sources:[],verified:false};
+// NEVER return generic "Explained Clearly" template - return helpful direct answer
+return {text:`I understand you are asking about "${q}".\n\nHere is a clear answer:\n\nIf this is about a person, tell me the full name and I will give you their verified biography with sources.\n\nIf this is about business, school, or a project, tell me what you want to create and I will write it for you now.\n\nExample: Type "Who is Tinubu?" or "Give me a business plan" and I will answer straight.`,sources:[],verified:false};
 }
 async function getRealAnswer(q){
-// 1. SPELLING CORRECTION + VERIFIED PEOPLE FIRST
+// 1. VERIFIED PEOPLE - FUZZY, ALWAYS FIRST - even for "How is tunibu"
 let corrected=correctSpelling(q);
 if(corrected && VERIFIED_PEOPLE[corrected]){
 let v=VERIFIED_PEOPLE[corrected];
 let note='';
-if(q.toLowerCase().includes('tunibu')) note=`You typed "tunibu" — you mean **${v.name}**? Yes, here is the verified story:\n\n`;
-return {text:note+v.answer, sources:v.sources, verified:true, steps:[`Correcting "tunibu" to "${v.name}"`,`Verifying ${v.name} biography facts`,`Checking sources: Wikipedia, Embassy, BlackPast`]};
+if(!q.toLowerCase().includes('tinubu')||q.toLowerCase().includes('tunibu')) note=`You typed "tunibu" — you mean **${v.name}**? Yes, here is the verified story:\n\n`;
+return {text:note+v.answer, sources:v.sources, verified:true, steps:[`Correcting spelling to "${v.name}"`,`Verifying ${v.name} biography facts`,`Checking sources: Wikipedia, Embassy, BlackPast`]};
 }
-// 2. Wikipedia for any "who is / what is" - verified
+// 2. ANY "who is / what is / how is" + person -> Wikipedia, NEVER generic
 try{
-let m=q.toLowerCase().match(/(?:who is|what is|where is|tell me about|explain) (.+)/);
+let m=q.toLowerCase().match(/(?:who is|what is|where is|how is|tell me about|explain) (.+)/);
 if(m){
 let topic=m[1].replace(/\?/g,'').trim();
-let r=await fetch('https://en.wikipedia.org/api/rest_v1/page/summary/'+encodeURIComponent(topic));
+if(topic.length>2){
+let wikiTopic=topic==='tunibu'||topic==='tinubu'?'Bola Tinubu':topic;
+let r=await fetch('https://en.wikipedia.org/api/rest_v1/page/summary/'+encodeURIComponent(wikiTopic));
 let j=await r.json();
 if(j.extract && j.extract.length>60 && !isBad(j.extract)){
-return {text:j.extract, sources:[{name:'en.wikipedia.org - '+topic,url:'https://en.wikipedia.org/wiki/'+encodeURIComponent(topic)}], verified:true, steps:[`Searching Wikipedia for "${topic}"`,`Verifying facts`,`Showing source`]};
+return {text:j.extract, sources:[{name:'en.wikipedia.org - '+wikiTopic,url:'https://en.wikipedia.org/wiki/'+encodeURIComponent(wikiTopic)}], verified:true, steps:[`Searching Wikipedia for "${wikiTopic}"`,`Verifying facts`,`Showing source`]};
+}
 }
 }
 }catch(e){}
-// 3. Pollinations for creative, with strict no-invent prompt
+// 3. Pollinations for creative
 try{
-let prompt=`You are IbomNova, a helpful AI like ChatGPT. Answer in clear simple English. Give DIRECT answer, do not ask clarifying questions. NEVER invent biography, childhood, school, or career for a real person. If you do not know a fact, say "I do not know, let me check". NEVER use markdown tables. NEVER use ###. NEVER use | symbols. NEVER use placeholders like [X]. Use plain list 1. 2. 3. Question: ${q}`;
+let prompt=`You are IbomNova. Answer in clear simple English. Give DIRECT answer. NEVER invent biography. If you do not know, say "I do not know". NEVER use tables. NEVER use ###. NEVER use | symbols. NEVER use placeholders. Question: ${q}`;
 let res=await fetch('https://text.pollinations.ai/'+encodeURIComponent(prompt));
 let ans=await res.text();
 let cleaned=cleanAI(ans);
 if(cleaned) return {text:cleaned, sources:[], verified:false, steps:[]};
 }catch(e){}
-// 4. Local brain
 return englishBrain(q);
 }
 let isSending=false;
