@@ -173,8 +173,6 @@ let mode='signup';
 let currentUser=JSON.parse(localStorage.getItem('ibom_current')||'null');
 let users=JSON.parse(localStorage.getItem('ibom_users')||'{}');
 let chats=JSON.parse(localStorage.getItem('ibom_chats')||'{}');
-// *** NO AUTO DELETE ANYMORE - YOUR CHATS ARE SAFE ***
-// We do NOT delete anything here. Old bad messages are just hidden when showing, not deleted.
 let currentChatId=localStorage.getItem('ibom_currentChat')||null;
 let wallet=JSON.parse(localStorage.getItem('ibom_wallet')||'{"bal":1000,"plan":"Free","tx":[]}');
 let notifs=JSON.parse(localStorage.getItem('ibom_notifs')||'[{"t":"Your Business Plan is ready","d":"Tap to view your project","time":"2h ago","read":false},{"t":"New IbomNova Update","d":"Verified facts are now live!","time":"Yesterday","read":false},{"t":"Subscription Reminder","d":"Your Pro trial ends in 2 days","time":"2 days ago","read":false}]');
@@ -348,7 +346,6 @@ function speakIcon(b){let t=b.closest('.m-ai').querySelector('div').innerText;sp
 updateSidebar();
 if(currentUser){document.getElementById('landing').style.display='none';document.getElementById('chat').classList.add('active');if(!currentChatId||!chats[currentChatId]||chats[currentChatId].length===0){currentChatId='chat_'+Date.now();chats[currentChatId]=[{role:'ai',text:`Hello ${currentUser.name}! I am IbomNova. Ask me anything!`,isWelcome:true}];saveChats();}renderMsgs();renderHist();scrollToBottom(false);}
 else{
-// Show landing but keep chat accessible - do NOT force logout view if chats exist
 if(chats[currentChatId] && chats[currentChatId].length>0){document.getElementById('landing').style.display='none';document.getElementById('chat').classList.add('active');renderMsgs();renderHist();}
 }
 </script>
