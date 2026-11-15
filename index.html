@@ -157,7 +157,7 @@ function safeGet(k,d){try{var v=localStorage.getItem(k);return v?JSON.parse(v):d
 function safeSet(k,v){try{localStorage.setItem(k,JSON.stringify(v));return true}catch(e){return false}}
 function safeSetStr(k,v){try{localStorage.setItem(k,v);return true}catch(e){return false}}
 var mode='signup';
-var currentUser=safeGet('ibom_current',null);
+var currentUser=null;
 var users=safeGet('ibom_users',{});
 var chats=safeGet('ibom_chats',{});
 var currentChatId=null;try{currentChatId=localStorage.getItem('ibom_currentChat')}catch(e){}
@@ -169,7 +169,7 @@ if(savedAvatar){profile.avatar=savedAvatar}
 else if(profile.avatar){savedAvatar=profile.avatar;safeSetStr('ibom_avatar',savedAvatar)}
 var theme='dark';try{theme=localStorage.getItem('ibom_theme')||'dark'}catch(e){}
 if(theme==='light') document.body.classList.add('light');
-if(!currentUser){if(users['coachimoh101@gmail.com']){currentUser=users['coachimoh101@gmail.com']}else{currentUser={name:'Coach imoh',email:'coachimoh101@gmail.com',pass:'1234'};users['coachimoh101@gmail.com']=currentUser;safeSet('ibom_users',users)}safeSet('ibom_current',currentUser)}
+// Authentication is managed by Firebase; no automatic demo login.
 function getAvatar(){return profile.avatar||''}
 function toggleSide(){document.getElementById('sidebar').classList.toggle('show')}
 function closeModal(id){document.getElementById(id).classList.remove('show')}
@@ -319,20 +319,27 @@ function aiAnswer(q){
   return {text:'I am here to help you, '+name+'! Ask me anything — business, school, maths, science, history, or about any person. Type your question now.'};
 }
 var isSending=false;
-function send(){
+async function send(){
   if(isSending) return;
   var inp=document.getElementById('q');var q=inp.value.trim();if(!q) return;
+  if(!currentUser) return toast('Please log in to use IbomNova.');
   document.getElementById('emojiPop').classList.remove('show');
   if(!currentChatId||!chats[currentChatId]){currentChatId='chat_'+Date.now();chats[currentChatId]=[];try{localStorage.setItem('ibom_currentChat',currentChatId)}catch(e){}}
-  chats[currentChatId].push({role:'user',text:q});inp.value='';renderMsgs();saveChats();renderHist();profile.points+=10;var p3={bio:profile.bio,avatar:'',phone:profile.phone,points:profile.points,streak:profile.streak};safeSet('ibom_profile',p3);updateSidebar();
+  var history=chats[currentChatId].slice(-8).map(function(m){return {role:m.role==='ai'?'ai':'user',text:m.text}});
+  chats[currentChatId].push({role:'user',text:q});inp.value='';renderMsgs();saveChats();renderHist();
   isSending=true;
-  var typing=document.createElement('div');typing.className='m-ai';typing.id='typing';typing.innerText='IbomNova is typing...';document.getElementById('msgs').appendChild(typing);document.getElementById('msgs').scrollTop=99999;
-  setTimeout(function(){
-    var t=document.getElementById('typing');if(t) t.remove();
-    var res=aiAnswer(q);
-    chats[currentChatId].push({role:'ai',text:res.text,sources:res.sources||[],verified:res.verified||false,steps:res.steps||[]});
+  var typing=document.createElement('div');typing.className='m-ai';typing.id='typing';typing.innerText='IbomNova is thinking...';document.getElementById('msgs').appendChild(typing);document.getElementById('msgs').scrollTop=99999;
+  try{
+    var response=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:q,history:history})});
+    var data=await response.json();
+    if(!response.ok) throw new Error(data.error||'The AI service is temporarily unavailable.');
+    chats[currentChatId].push({role:'ai',text:data.reply||'I could not generate a reply. Please try again.'});
+  }catch(error){
+    chats[currentChatId].push({role:'ai',text:'Sorry, IbomNova could not reach the AI service. Please try again in a moment. ('+error.message+')'});
+  }finally{
+    var t=document.getElementById('typing');if(t)t.remove();
     saveChats();renderMsgs();renderHist();updateSidebar();scrollToBottom();isSending=false;
-  },700);
+  }
 }
 function copyIcon(b){var t=b.closest('.m-ai').querySelector('div').innerText;try{navigator.clipboard.writeText(t)}catch(e){}b.innerText='✅';setTimeout(function(){b.innerText='📋'},1200)}
 function likeIcon(b){b.innerText='💚'}
@@ -340,6 +347,44 @@ function dislikeIcon(b){b.innerText='💔'}
 function speakIcon(b){var t=b.closest('.m-ai').querySelector('div').innerText;try{speechSynthesis.speak(new SpeechSynthesisUtterance(t))}catch(e){}}
 updateSidebar();
 if(currentUser){document.getElementById('landing').style.display='none';document.getElementById('chat').classList.add('active');if(!currentChatId||!chats[currentChatId]||chats[currentChatId].length===0){currentChatId='chat_'+Date.now();chats[currentChatId]=[{role:'ai',text:'Hello '+currentUser.name+'! I am IbomNova. Ask me anything!'}];saveChats()}renderMsgs();renderHist();scrollToBottom()}
+</script>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+const firebaseConfig = { apiKey: "AIzaSyCIjfg0XnJNlDnutG-8z0hzOH2Pun3Odog", authDomain: "ibomnova.firebaseapp.com", projectId: "ibomnova", storageBucket: "ibomnova.firebasestorage.app", messagingSenderId: "271815396164", appId: "1:271815396164:web:0d6b220c5881b984192511" };
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+window.doAuth = async function(){
+  const name=document.getElementById('aName').value.trim();
+  const email=document.getElementById('aEmail').value.trim();
+  const password=document.getElementById('aPass').value;
+  if(!email || password.length<6){ if(window.toast) toast('Enter a valid email and password of at least 6 characters.'); return; }
+  try{
+    if(window.mode==='signup'){
+      if(!name){toast('Please enter your name.');return;}
+      const credential=await createUserWithEmailAndPassword(auth,email,password);
+      await updateProfile(credential.user,{displayName:name});
+    }else{
+      await signInWithEmailAndPassword(auth,email,password);
+    }
+    closeAuth();
+  }catch(error){toast(error.code==='auth/email-already-in-use'?'This email already has an account. Please log in.':error.code==='auth/invalid-credential'?'Email or password is incorrect.':error.message);}
+};
+window.logout = async function(){
+  if(!confirm('Logout? Your chats and saved workspace data will stay on this device.')) return;
+  try{await signOut(auth);}catch(error){toast(error.message);}
+};
+onAuthStateChanged(auth,user=>{
+  window.currentUser=user?{name:user.displayName||user.email.split('@')[0],email:user.email,uid:user.uid}:null;
+  if(user){
+    document.getElementById('landing').style.display='none';
+    showChat(); updateSidebar();
+  }else{
+    document.getElementById('chat').classList.remove('active');
+    document.getElementById('landing').style.display='block';
+    document.getElementById('sidebar').classList.remove('show');
+  }
+});
 </script>
 </body>
 </html>
