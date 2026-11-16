@@ -2,14 +2,22 @@
 <html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Login - IbomNova</title>
 <style>
 *{box-sizing:border-box}body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;background:#0a0a0a;color:#fff;font-family:Arial,sans-serif}.card{width:100%;max-width:400px;background:#151515;border:1px solid #292929;border-radius:20px;padding:28px}.brand{font-size:26px;font-weight:800;color:#fff;margin-bottom:24px}.brand span{color:#ff7a00}h1{font-size:25px;margin:0 0 8px}.muted{color:#aaa;font-size:14px;margin:0 0 22px}input{width:100%;padding:14px;margin:7px 0;border:1px solid #383838;border-radius:10px;background:#0e0e0e;color:#fff;font-size:15px}.btn{width:100%;padding:14px;border:0;border-radius:10px;background:#ff7a00;color:#fff;font-weight:800;font-size:16px;margin-top:12px}.msg{display:none;background:#351919;color:#ffb5b5;padding:11px;border-radius:9px;font-size:13px;margin-bottom:12px}.links{text-align:center;color:#aaa;font-size:13px;margin-top:18px}.links a{color:#ff9a38}.home{display:block;text-align:center;color:#aaa;margin-top:16px;font-size:13px}
-</style></head><body><main class="card"><div class="brand">✦ Ibom<span>Nova</span></div><h1>Welcome back</h1><p class="muted">Log in to continue to IbomNova.</p><div id="msg" class="msg"></div><input id="email" type="email" autocomplete="email" placeholder="Email address"><input id="password" type="password" autocomplete="current-password" placeholder="Password (at least 6 characters)"><button class="btn" id="submit">Log in</button><div class="links">New to IbomNova? <a href="signup.html">Create an account</a></div><a class="home" href="index.html">← Back to home</a></main>
+</style></head><body><main class="card"><div class="brand">✦ Ibom<span>Nova</span></div><h1>Welcome back</h1><p class="muted">Log in to continue to IbomNova.</p><div id="msg" class="msg"></div><input id="email" type="email" autocomplete="email" placeholder="Email address"><input id="password" type="password" autocomplete="current-password" placeholder="Password (at least 6 characters)"><button class="btn" id="submit">Log in</button>
+<div class="links"><a href="#" id="forgot">Forgot password?</a></div><div class="links">New to IbomNova? <a href="signup.html">Create an account</a></div><a class="home" href="index.html">← Back to home</a></main>
 <script type="module">
 import {initializeApp} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import {getAuth,signInWithEmailAndPassword} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import {getAuth,signInWithEmailAndPassword,sendPasswordResetEmail} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 const firebaseConfig = { apiKey: "AIzaSyCIjfg0XnJNlDnutG-8z0hzOH2Pun3Odog", authDomain: "ibomnova.firebaseapp.com", projectId: "ibomnova", storageBucket: "ibomnova.firebasestorage.app", messagingSenderId: "271815396164", appId: "1:271815396164:web:0d6b220c5881b984192511" };
 const auth=getAuth(initializeApp(firebaseConfig));
 const msg=document.getElementById("msg");
 function show(text){msg.textContent=text;msg.style.display="block";}
+document.getElementById("forgot").addEventListener("click",async(event)=>{
+ event.preventDefault();
+ const email=document.getElementById("email").value.trim();
+ if(!email){show("Enter your email address first, then tap Forgot password.");return;}
+ try{await sendPasswordResetEmail(auth,email);show("If an account exists for this email, Firebase will send a password reset link.");}
+ catch(error){show("We could not send the reset email. Check the address and try again.");}
+});
 document.getElementById("submit").addEventListener("click",async()=>{
  const email=document.getElementById("email").value.trim();
  const password=document.getElementById("password").value;
