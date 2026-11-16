@@ -182,7 +182,7 @@ function safeSet(k,v){try{localStorage.setItem(k,JSON.stringify(v));return true}
 function safeSetStr(k,v){try{localStorage.setItem(k,v);return true}catch(e){return false}}
 var mode='signup';
 var currentUser=null;
-var users=safeGet('ibom_users',{});
+var users={}; // Legacy browser-only accounts are no longer used.
 var chats=safeGet('ibom_chats',{});
 var currentChatId=null;try{currentChatId=localStorage.getItem('ibom_currentChat')}catch(e){}
 var wallet=safeGet('ibom_wallet',{bal:1000,plan:'Free',tx:[]});
@@ -381,6 +381,8 @@ import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWith
 const firebaseConfig = { apiKey: "AIzaSyCIjfg0XnJNlDnutG-8z0hzOH2Pun3Odog", authDomain: "ibomnova.firebaseapp.com", projectId: "ibomnova", storageBucket: "ibomnova.firebasestorage.app", messagingSenderId: "271815396164", appId: "1:271815396164:web:0d6b220c5881b984192511" };
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+// Remove old browser-only password records; Firebase accounts and saved chats/profile data are unaffected.
+try{localStorage.removeItem('ibom_users');localStorage.removeItem('ibom_current')}catch(e){}
 window.getIbomIdToken = async function(){if(!auth.currentUser) throw new Error('Please sign in again to continue.');return await auth.currentUser.getIdToken();};
 window.doAuth = async function(){
   const name=document.getElementById('aName').value.trim();
