@@ -115,10 +115,34 @@ body.light .proof{background:#eee}
 #toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:#111;color:#fff;padding:12px 18px;border-radius:30px;font-size:14px;font-weight:700;z-index:999;opacity:0;pointer-events:none;transition:.3s;max-width:90%;text-align:center}
 #toast.show{opacity:1}
 @media(max-width:700px){.side{position:fixed;left:0;top:0;bottom:0}.attach-grid{flex-direction:column}}
+
+/* IbomNova sidebar polish: retain existing controls and layout */
+.sidebar-backdrop{display:none}
+.side{background:linear-gradient(165deg,#0f3d1e 0%,#092b16 100%);color:#fff;border-right:1px solid rgba(255,255,255,.09);box-shadow:8px 0 28px rgba(0,0,0,.16);overscroll-behavior:contain}
+.side .logo{letter-spacing:-.6px;padding:5px 2px}
+.profile-card{border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.09);transition:background .2s,border-color .2s}
+.profile-card:hover{background:rgba(255,255,255,.14);border-color:rgba(255,122,0,.45)}
+.menu-item{min-height:54px;transition:background .18s,transform .18s}
+.menu-item:active{transform:scale(.985)}
+.menu-item:hover{background:rgba(255,255,255,.1)}
+.menu-item .ic{flex:0 0 32px}
+.newbtn{box-shadow:0 7px 18px rgba(255,122,0,.2);transition:transform .18s,filter .18s}
+.newbtn:hover{filter:brightness(1.06);transform:translateY(-1px)}
+.hist div{border:1px solid rgba(255,255,255,.06);transition:background .18s}
+.hist div:hover{background:rgba(255,255,255,.14)}
+@media(max-width:700px){
+ .side{position:fixed;left:0;top:0;bottom:0;width:min(86vw,320px);max-width:320px;padding:16px;transform:translateX(-105%);transition:transform .24s ease;display:flex;visibility:hidden;z-index:101}
+ .side.show{transform:translateX(0);visibility:visible}
+ .sidebar-backdrop.active{display:block;position:fixed;inset:0;background:rgba(0,0,0,.58);backdrop-filter:blur(2px);z-index:100}
+ body{overflow-x:hidden}
+}
+@media(prefers-reduced-motion:reduce){.side,.menu-item,.newbtn,.profile-card,.hist div{transition:none!important}}
+
 </style>
 </head>
 <body>
 <div id="toast"></div>
+<div id="sidebarBackdrop" class="sidebar-backdrop" onclick="closeSide()" aria-hidden="true"></div>
 <button id="scrollDownBtn" onclick="scrollToBottom()">↓</button>
 <div class="app">
 <div class="side" id="sidebar">
@@ -171,7 +195,8 @@ var theme='dark';try{theme=localStorage.getItem('ibom_theme')||'dark'}catch(e){}
 if(theme==='light') document.body.classList.add('light');
 // Authentication is managed by Firebase; no automatic demo login.
 function getAvatar(){return profile.avatar||''}
-function toggleSide(){document.getElementById('sidebar').classList.toggle('show')}
+function toggleSide(){var side=document.getElementById('sidebar');var backdrop=document.getElementById('sidebarBackdrop');side.classList.toggle('show');if(backdrop)backdrop.classList.toggle('active',side.classList.contains('show'))}
+function closeSide(){var side=document.getElementById('sidebar');var backdrop=document.getElementById('sidebarBackdrop');side.classList.remove('show');if(backdrop)backdrop.classList.remove('active')}
 function closeModal(id){document.getElementById(id).classList.remove('show')}
 function openAuth(m){mode=m;document.getElementById('authTitle').innerText=m==='signup'?'Create Account':'Welcome back';document.getElementById('aName').style.display=m==='signup'?'block':'none';document.getElementById('switchText').innerHTML=m==='signup'?'Already have account? <span class="link" onclick="openAuth(\'login\')">Login</span>':'No account? <span class="link" onclick="openAuth(\'signup\')">Signup</span>';document.getElementById('authModal').classList.add('show')}
 function closeAuth(){closeModal('authModal')}
