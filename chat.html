@@ -33,7 +33,7 @@ const auth = getAuth(app);
 const chatEl = document.getElementById("chat");
 let history = JSON.parse(localStorage.getItem("ibom_chat") || "[]");
 function formatText(text){
-  let t = text;
+  let t = String(text||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
   t = t.split('\n').filter(l=>{ const tr=l.trim(); if(tr.includes('|---|')) return false; if(tr.startsWith('|')&&tr.endsWith('|')&&tr.split('|').length>3) return false; return true; }).join('\n');
   t = t.replace(/^>\s*\*?/gm,'').replace(/^\*\s+/gm,'• ');
   t = t.replace(/(^|[^*])\*([^*\n]+)\*([^*]|$)/g,'$1$2$3');
@@ -46,7 +46,7 @@ function render(){
   history.forEach(m=>{
     const row=document.createElement("div"); row.className=`row ${m.role}`;
     const bubble=document.createElement("div"); bubble.className="bubble";
-    bubble.innerHTML=m.role==='user'?m.text.replace(/</g,'&lt;'):formatText(m.text);
+    if(m.role==='user') bubble.textContent=m.text; else bubble.innerHTML=formatText(m.text);
     row.appendChild(bubble);
     if(m.role==='ai'){ const act=document.createElement("div"); act.className="actions"; const c=document.createElement("button"); c.className="copyBtn"; c.textContent="📋 Copy"; c.onclick=()=>{navigator.clipboard.writeText(m.text); c.textContent="✅ Copied"; setTimeout(()=>c.textContent="📋 Copy",1500)}; act.appendChild(c); row.appendChild(act); }
     chatEl.appendChild(row);
@@ -62,7 +62,8 @@ async function send(){
   history.push({role:"user",text}); localStorage.setItem("ibom_chat",JSON.stringify(history)); render(); input.value="";
   const temp=document.createElement("div"); temp.className="row ai"; temp.innerHTML='<div class="bubble">Thinking...</div>'; chatEl.appendChild(temp);
   try{
-    const res=await fetch("/api/chat",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({message:text,history:history.slice(-8)})});
+    const idToken=await auth.currentUser.getIdToken();
+    const res=await fetch("/api/chat",{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+idToken},body:JSON.stringify({message:text,history:history.slice(-8)})});
     const data=await res.json(); temp.remove();
     history.push({role:"ai",text:data.reply||data.error}); localStorage.setItem("ibom_chat",JSON.stringify(history)); render();
   }catch(e){ temp.remove(); history.push({role:"ai",text:"Error: "+e.message}); render(); }

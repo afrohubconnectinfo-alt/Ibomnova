@@ -1,39 +1,30 @@
 <!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Create Account - Ibomnova</title>
-<link rel="icon" href="favicon-32.png">
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Login - IbomNova</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:Arial;background:#0a0a0a;color:white;display:flex;justify-content:center;align-items:center;min-height:100vh;padding:20px}
-.box{background:#151515;border:1px solid #222;border-radius:20px;padding:30px;width:100%;max-width:380px;text-align:center}
-.logo img{height:34px;background:white;padding:4px 12px;border-radius:8px;margin-bottom:16px}
-h2{font-size:24px} .sub{color:#777;font-size:13px;margin:6px 0 18px}
-input{width:100%;padding:13px;border-radius:12px;border:1px solid #333;background:#0f0f0f;color:white;margin-bottom:12px;outline:none}
-.btn{width:100%;padding:13px;border-radius:12px;border:none;background:#7c3aed;color:white;font-weight:bold;cursor:pointer}
-.links{margin-top:16px;font-size:13px;color:#777} .links a{color:#9d6bff;text-decoration:none;font-weight:bold}
-.msg{font-size:13px;padding:10px;border-radius:10px;display:none;margin-bottom:12px} .error{background:#2a1212;color:#ff6b6b}
-#welcome{position:fixed;inset:0;background:rgba(0,0,0,0.92);display:none;align-items:center;justify-content:center;padding:20px;z-index:99}
-.wcard{background:#151515;border:1px solid #333;border-radius:20px;padding:30px;max-width:360px;text-align:center}
-</style>
-</head>
-<body>
-<div class="box">
-<div class="logo"><img src="logo.png"></div>
-<h2>Create Account</h2><p class="sub">Join Ibomnova today</p>
-<div id="msg" class="msg error"></div>
-<input id="email" type="email" placeholder="Email">
-<input id="pass" type="password" placeholder="Password (min 6 chars)">
-<button class="btn" onclick="signup()">Create Account</button>
-<div class="links">Already have account? <a href="login.html">Login</a></div>
-</div>
-<div id="welcome"><div class="wcard"><h2>🎉 Welcome to Ibomnova!</h2><p style="color:#888;margin:12px 0 18px;font-size:14px;line-height:1.5">Your account is ready! We're excited to have you. Let's start building amazing things together.</p><button class="btn" onclick="location.href='chat.html'">🚀 Start Chatting Now</button></div></div>
+*{box-sizing:border-box}body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;background:#0a0a0a;color:#fff;font-family:Arial,sans-serif}.card{width:100%;max-width:400px;background:#151515;border:1px solid #292929;border-radius:20px;padding:28px}.brand{font-size:26px;font-weight:800;color:#fff;margin-bottom:24px}.brand span{color:#ff7a00}h1{font-size:25px;margin:0 0 8px}.muted{color:#aaa;font-size:14px;margin:0 0 22px}input{width:100%;padding:14px;margin:7px 0;border:1px solid #383838;border-radius:10px;background:#0e0e0e;color:#fff;font-size:15px}.btn{width:100%;padding:14px;border:0;border-radius:10px;background:#ff7a00;color:#fff;font-weight:800;font-size:16px;margin-top:12px}.msg{display:none;background:#351919;color:#ffb5b5;padding:11px;border-radius:9px;font-size:13px;margin-bottom:12px}.links{text-align:center;color:#aaa;font-size:13px;margin-top:18px}.links a{color:#ff9a38}.home{display:block;text-align:center;color:#aaa;margin-top:16px;font-size:13px}
+</style></head><body><main class="card"><div class="brand">✦ Ibom<span>Nova</span></div><h1>Welcome back</h1><p class="muted">Log in to continue to IbomNova.</p><div id="msg" class="msg"></div><input id="email" type="email" autocomplete="email" placeholder="Email address"><input id="password" type="password" autocomplete="current-password" placeholder="Password (at least 6 characters)"><button class="btn" id="submit">Log in</button>
+<div class="links"><a href="#" id="forgot">Forgot password?</a></div><div class="links">New to IbomNova? <a href="signup.html">Create an account</a></div><a class="home" href="index.html">← Back to home</a></main>
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import {initializeApp} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {getAuth,signInWithEmailAndPassword,sendPasswordResetEmail} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 const firebaseConfig = { apiKey: "AIzaSyCIjfg0XnJNlDnutG-8z0hzOH2Pun3Odog", authDomain: "ibomnova.firebaseapp.com", projectId: "ibomnova", storageBucket: "ibomnova.firebasestorage.app", messagingSenderId: "271815396164", appId: "1:271815396164:web:0d6b220c5881b984192511" };
-const app = initializeApp(firebaseConfig); const auth=getAuth(app);
-function show(t){const m=document.getElementById('msg');m.innerText=t;m.style.display='block'}
-window.signup=async()=>{try{if(pass.value.length<6){show('Password must be 6+ chars');return}await createUserWithEmailAndPassword(auth,email.value,pass.value);document.getElementById('welcome').style.display='flex'}catch(e){if(e.code=='auth/email-already-in-use'){show('This email already exists! Please Login or use Forgot Password.')}else{show(e.message)}}}
+const auth=getAuth(initializeApp(firebaseConfig));
+const msg=document.getElementById("msg");
+function show(text){msg.textContent=text;msg.style.display="block";}
+document.getElementById("forgot").addEventListener("click",async(event)=>{
+ event.preventDefault();
+ const email=document.getElementById("email").value.trim();
+ if(!email){show("Enter your email address first, then tap Forgot password.");return;}
+ try{await sendPasswordResetEmail(auth,email);show("If an account exists for this email, Firebase will send a password reset link.");}
+ catch(error){show("We could not send the reset email. Check the address and try again.");}
+});
+document.getElementById("submit").addEventListener("click",async()=>{
+ const email=document.getElementById("email").value.trim();
+ const password=document.getElementById("password").value;
+ if(!email||password.length<6){show("Enter a valid email and a password of at least 6 characters.");return;}
+ try{
+  await signInWithEmailAndPassword(auth,email,password);
+  location.href="index.html";
+ }catch(error){show(error.code==="auth/email-already-in-use"?"This email already has an account. Please log in.":error.code==="auth/invalid-credential"?"Email or password is incorrect.":error.message);}
+});
 </script></body></html>
