@@ -5,7 +5,7 @@
 <title>IbomNova - For Everyone, Everywhere</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',sans-serif}
-body{background:#0a0a0a;color:#fff}
+body{background:#0a0a0a;color:#fff;visibility:hidden}body.auth-ready{visibility:visible}
 body.light{background:#f5f5f0;color:#111}
 body.light .side{background:#fff;color:#111}
 body.light .chat{background:#fff;color:#111}
@@ -211,7 +211,7 @@ function renderHist(){var h=document.getElementById('histList');if(!h)return;h.r
 function openChat(id){currentChatId=id;try{localStorage.setItem('ibom_currentChat',id)}catch(e){}renderMsgs();scrollToBottom();if(window.innerWidth<700)toggleSide()}
 function delChat(id){if(!confirm('Delete this ONE chat only?')) return;delete chats[id];saveChats();if(window.deleteIbomCloudChat)window.deleteIbomCloudChat(id);if(id===currentChatId){currentChatId=null;showChat()}else renderHist()}
 function saveChats(){safeSet('ibom_chats',chats);if(window.scheduleIbomCloudSave)window.scheduleIbomCloudSave()}
-window.replaceIbomChatsFromCloud=function(remoteChats){chats=remoteChats||{};currentChatId=null;try{localStorage.removeItem('ibom_currentChat')}catch(e){}safeSet('ibom_chats',chats);renderHist();renderMsgs()};
+window.replaceIbomChatsFromCloud=function(remoteChats,preferredChatId){chats=remoteChats||{};currentChatId=preferredChatId&&chats[preferredChatId]?preferredChatId:null;try{if(currentChatId)localStorage.setItem('ibom_currentChat',currentChatId);else localStorage.removeItem('ibom_currentChat')}catch(e){}safeSet('ibom_chats',chats);renderHist();if(currentChatId)renderMsgs()};
 function getProjectCount(){return Object.keys(chats).length}
 function getLevel(){var p=getProjectCount();if(p>=20)return 'Master';if(p>=10)return 'Pro';if(p>=3)return 'Rising Star';return 'Beginner'}
 function updateSidebar(){var pts=profile.points+getProjectCount()*10;var uname=currentUser?currentUser.name:'Coach imoh';var uemail=currentUser?currentUser.email:'coachimoh101@gmail.com';var av=getAvatar()||'https://via.placeholder.com/100?text=👤';document.getElementById('sideName').innerText=uname;document.getElementById('sideEmail').innerText=uemail;document.getElementById('sidePts').innerText='✦ Nova Points • '+pts+' pts';document.getElementById('menuBio').innerText=profile.bio;document.getElementById('menuWallet').innerText='₦'+wallet.bal.toLocaleString();document.getElementById('streakText').innerText=profile.streak+' days streak';document.getElementById('levelText').innerText='Level: '+getLevel();document.getElementById('notifBadge').innerText=notifs.filter(function(n){return !n.read}).length;document.getElementById('topName').innerText=uname;document.getElementById('topAvatar').src=av;document.getElementById('sideAvatar').src=av;document.getElementById('themeLabel').innerText=theme==='light'?'Light':'Dark'}
@@ -430,11 +430,14 @@ async function loadIbomCloudChats(user){
   cloudUid = user.uid;
   const snapshot = await getDocs(collection(db,'users',user.uid,'conversations'));
   const remote = {};
+  const remoteUpdatedAt = {};
   snapshot.forEach(item=>{
     const data = item.data();
     remote[item.id] = Array.isArray(data.messages) ? data.messages : [];
     cloudCreatedAt[item.id] = data.createdAt || Date.now();
+    remoteUpdatedAt[item.id] = Number(data.updatedAt) || 0;
   });
+  const preferredChatId = Object.keys(remote).sort((a,b)=>(remoteUpdatedAt[b]||0)-(remoteUpdatedAt[a]||0))[0] || null;
   // Keep the old device-only history as a local backup; do not upload unowned legacy chats.
   try{
     if(!localStorage.getItem('ibom_cloud_legacy_backup_done')){
@@ -443,7 +446,7 @@ async function loadIbomCloudChats(user){
       localStorage.setItem('ibom_cloud_legacy_backup_done','1');
     }
   }catch(e){}
-  if(window.replaceIbomChatsFromCloud) window.replaceIbomChatsFromCloud(remote);
+  if(window.replaceIbomChatsFromCloud) window.replaceIbomChatsFromCloud(remote,preferredChatId);
 }
 // Remove old browser-only password records; Firebase accounts and saved chats/profile data are unaffected.
 try{localStorage.removeItem('ibom_users');localStorage.removeItem('ibom_current')}catch(e){}
@@ -516,6 +519,7 @@ onAuthStateChanged(auth,async user=>{
     document.getElementById('landing').style.display='block';
     document.getElementById('sidebar').classList.remove('show');
   }
+  document.body.classList.add('auth-ready');
 });
 </script>
 </body>
