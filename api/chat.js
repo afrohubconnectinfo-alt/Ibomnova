@@ -1,6 +1,10 @@
-// Verify Firebase ID tokens with Firebase Authentication before using paid AI providers.
+// Verify Firebase ID tokens before using the server-side AI provider.
 const FIREBASE_WEB_API_KEY = process.env.FIREBASE_WEB_API_KEY || "AIzaSyCIjfg0XnJNlDnutG-8z0hzOH2Pun3Odog";
 const requestCounts = new Map();
+const MAX_MESSAGE_LENGTH = 12000;
+const MAX_HISTORY_ITEMS = 8;
+const MAX_HISTORY_TEXT = 4000;
+const MAX_HISTORY_TOTAL = 24000;
 
 async function verifyFirebaseToken(idToken) {
   if (!idToken || typeof idToken !== "string" || idToken.length > 5000) return null;
@@ -12,7 +16,24 @@ async function verifyFirebaseToken(idToken) {
   if (!response.ok) return null;
   const data = await response.json();
   const user = Array.isArray(data.users) ? data.users[0] : null;
-  return user && user.localId ? user.localId : null;
+  if (!user || !user.localId || user.disabled === true) return null;
+  return user.localId;
+}
+
+function checkRequestLimit(uid) {
+  const now = Date.now();
+  // Remove expired entries so this per-instance fallback does not grow forever.
+  for (const [key, bucket] of requestCounts) {
+    if (now - bucket.startedAt >= 120000) requestCounts.delete(key);
+  }
+  const bucket = requestCounts.get(uid);
+  if (!bucket || now - bucket.startedAt >= 60000) {
+    requestCounts.set(uid, { startedAt: now, count: 1 });
+    return true;
+  }
+  if (bucket.count >= 20) return false;
+  bucket.count += 1;
+  return true;
 }
 
 export default async function handler(req, res) {
@@ -22,7 +43,7 @@ export default async function handler(req, res) {
   }
 
   const authHeader = req.headers.authorization || "";
-  const match = authHeader.match(/^Bearer\s+(.+)$/i);
+  const match = authHeader.match(/^Bearer\\s+(.+)$/i);
   if (!match) return res.status(401).json({ error: "Please sign in to use IbomNova AI." });
 
   let uid;
@@ -33,25 +54,19 @@ export default async function handler(req, res) {
   }
   if (!uid) return res.status(401).json({ error: "Your session has expired. Please sign in again." });
 
-  // Best-effort per-server-instance limit. A shared store is needed for a global quota.
-  const now = Date.now();
-  const bucket = requestCounts.get(uid);
-  if (!bucket || now - bucket.startedAt >= 60_000) {
-    requestCounts.set(uid, { startedAt: now, count: 1 });
-  } else if (bucket.count >= 20) {
-    return res.status(429).json({ error: "You've reached the short-term AI request limit. Please wait a minute." });
-  } else {
-    bucket.count += 1;
-  }
-
-  const body = req.body || {};
+  const body = req.body && typeof req.body === "object" && !Array.isArray(req.body) ? req.body : {};
   const message = typeof body.message === "string" ? body.message.trim() : "";
   const history = Array.isArray(body.history) ? body.history : [];
   if (!message) return res.status(400).json({ error: "A message is required." });
-  if (message.length > 12000) return res.status(400).json({ error: "Message is too long." });
+  if (message.length > MAX_MESSAGE_LENGTH) return res.status(400).json({ error: "Message is too long." });
+  if (history.length > 50) return res.status(400).json({ error: "Chat history is too large. Please start a new chat." });
 
   const apiKey = process.env.GROQ_API_KEY || process.env.OPENAI_API_KEY;
   if (!apiKey) return res.status(500).json({ error: "AI service is not configured. Please contact the site administrator." });
+
+  if (!checkRequestLimit(uid)) {
+    return res.status(429).json({ error: "You've reached the short-term AI request limit. Please wait a minute." });
+  }
 
   const messages = [{
     role: "system",
@@ -62,13 +77,24 @@ Use readable headings and bullet points on mobile. For house plans, ask for budg
 `
   }];
 
-  history.slice(-8).forEach(item => {
-    if (!item || typeof item.text !== "string" || item.text.length > 12000) return;
-    if (item.role === "user") messages.push({ role: "user", content: item.text });
-    else if (item.role === "ai") messages.push({ role: "assistant", content: item.text });
+  let historyChars = 0;
+  history.slice(-MAX_HISTORY_ITEMS).forEach(item => {
+    if (!item || typeof item.text !== "string") return;
+    if (item.role !== "user" && item.role !== "ai") return;
+    const text = item.text.trim();
+    if (!text || text.length > MAX_HISTORY_TEXT) return;
+    historyChars += text.length;
+    if (historyChars > MAX_HISTORY_TOTAL) return;
+    messages.push({
+      role: item.role === "user" ? "user" : "assistant",
+      content: text
+    });
   });
+
   const last = messages[messages.length - 1];
-  if (!(last && last.role === "user" && last.content === message)) messages.push({ role: "user", content: message });
+  if (!(last && last.role === "user" && last.content === message)) {
+    messages.push({ role: "user", content: message });
+  }
 
   try {
     const isGroq = !!process.env.GROQ_API_KEY;
@@ -80,7 +106,7 @@ Use readable headings and bullet points on mobile. For house plans, ask for budg
       body: JSON.stringify({ model, messages, temperature: 0.7, max_tokens: 1400 })
     });
     const data = await upstream.json();
-    if (!upstream.ok) return res.status(502).json({ error: data?.error?.message || "AI provider request failed." });
+    if (!upstream.ok) return res.status(502).json({ error: "The AI provider could not complete your request. Please try again." });
     const reply = data?.choices?.[0]?.message?.content;
     if (typeof reply !== "string" || !reply.trim()) return res.status(502).json({ error: "AI provider returned an empty response." });
     return res.status(200).json({ reply });
