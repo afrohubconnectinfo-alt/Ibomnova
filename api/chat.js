@@ -99,7 +99,9 @@ Use readable headings and bullet points on mobile. For house plans, ask for budg
   try {
     const isGroq = !!process.env.GROQ_API_KEY;
     const url = isGroq ? "https://api.groq.com/openai/v1/chat/completions" : "https://api.openai.com/v1/chat/completions";
-    const model = isGroq ? "openai/gpt-oss-20b" : "gpt-4o-mini";
+    const model = isGroq
+      ? (process.env.GROQ_MODEL || "openai/gpt-oss-20b")
+      : (process.env.OPENAI_MODEL || "gpt-4o-mini");
     const upstream = await fetch(url, {
       method: "POST",
       headers: { "Content-Type": "application/json", "Authorization": `Bearer ${apiKey}` },
