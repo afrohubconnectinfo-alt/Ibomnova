@@ -209,8 +209,9 @@ function showChat(){document.getElementById('landing').style.display='none';docu
 function startNewChat(){currentChatId='chat_'+Date.now();try{localStorage.setItem('ibom_currentChat',currentChatId)}catch(e){}chats[currentChatId]=[{role:'ai',text:'New chat started! What do you want to ask?'}];saveChats();renderMsgs();renderHist();scrollToBottom();if(window.innerWidth<700)toggleSide();toast('New chat started')}
 function renderHist(){var h=document.getElementById('histList');if(!h)return;h.replaceChildren();Object.keys(chats).reverse().forEach(function(id){var messages=Array.isArray(chats[id])?chats[id]:[];var first=messages.find(function(m){return m&&m.role==='user'});if(!first)return;var row=document.createElement('div');var title=document.createElement('button');title.type='button';title.className='history-title';title.style.cssText='flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap';title.textContent=String(first.text||'').slice(0,30);title.addEventListener('click',function(){openChat(id)});var del=document.createElement('button');del.type='button';del.textContent='🗑️';del.setAttribute('aria-label','Delete chat');del.addEventListener('click',function(){delChat(id)});row.append(title,del);h.appendChild(row)});if(!h.childElementCount){var empty=document.createElement('div');empty.style.opacity='.6';empty.textContent='No chats yet';h.appendChild(empty)}}
 function openChat(id){currentChatId=id;try{localStorage.setItem('ibom_currentChat',id)}catch(e){}renderMsgs();scrollToBottom();if(window.innerWidth<700)toggleSide()}
-function delChat(id){if(!confirm('Delete this ONE chat only?')) return;delete chats[id];saveChats();if(id===currentChatId){currentChatId=null;showChat()}else renderHist()}
-function saveChats(){safeSet('ibom_chats',chats)}
+function delChat(id){if(!confirm('Delete this ONE chat only?')) return;delete chats[id];saveChats();if(window.deleteIbomCloudChat)window.deleteIbomCloudChat(id);if(id===currentChatId){currentChatId=null;showChat()}else renderHist()}
+function saveChats(){safeSet('ibom_chats',chats);if(window.scheduleIbomCloudSave)window.scheduleIbomCloudSave()}
+window.replaceIbomChatsFromCloud=function(remoteChats){chats=remoteChats||{};currentChatId=null;try{localStorage.removeItem('ibom_currentChat')}catch(e){}safeSet('ibom_chats',chats);renderHist();renderMsgs()};
 function getProjectCount(){return Object.keys(chats).length}
 function getLevel(){var p=getProjectCount();if(p>=20)return 'Master';if(p>=10)return 'Pro';if(p>=3)return 'Rising Star';return 'Beginner'}
 function updateSidebar(){var pts=profile.points+getProjectCount()*10;var uname=currentUser?currentUser.name:'Coach imoh';var uemail=currentUser?currentUser.email:'coachimoh101@gmail.com';var av=getAvatar()||'https://via.placeholder.com/100?text=👤';document.getElementById('sideName').innerText=uname;document.getElementById('sideEmail').innerText=uemail;document.getElementById('sidePts').innerText='✦ Nova Points • '+pts+' pts';document.getElementById('menuBio').innerText=profile.bio;document.getElementById('menuWallet').innerText='₦'+wallet.bal.toLocaleString();document.getElementById('streakText').innerText=profile.streak+' days streak';document.getElementById('levelText').innerText='Level: '+getLevel();document.getElementById('notifBadge').innerText=notifs.filter(function(n){return !n.read}).length;document.getElementById('topName').innerText=uname;document.getElementById('topAvatar').src=av;document.getElementById('sideAvatar').src=av;document.getElementById('themeLabel').innerText=theme==='light'?'Light':'Dark'}
@@ -380,9 +381,64 @@ if(currentUser){document.getElementById('landing').style.display='none';document
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile, sendPasswordResetEmail, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore, collection, doc, getDocs, setDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 const firebaseConfig = { apiKey: "AIzaSyCIjfg0XnJNlDnutG-8z0hzOH2Pun3Odog", authDomain: "ibomnova.firebaseapp.com", projectId: "ibomnova", storageBucket: "ibomnova.firebasestorage.app", messagingSenderId: "271815396164", appId: "1:271815396164:web:0d6b220c5881b984192511" };
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+const db = getFirestore(app);
+let cloudUid = null;
+let cloudSaveTimer = null;
+const cloudCreatedAt = {};
+window.scheduleIbomCloudSave = function(){
+  if(!cloudUid) return;
+  clearTimeout(cloudSaveTimer);
+  cloudSaveTimer = setTimeout(async ()=>{
+    if(!cloudUid || !auth.currentUser || auth.currentUser.uid !== cloudUid) return;
+    const chats = JSON.parse(localStorage.getItem('ibom_chats') || '{}');
+    for(const [id, rawMessages] of Object.entries(chats)){
+      if(!Array.isArray(rawMessages)) continue;
+      const messages = rawMessages.slice(-100).map(m=>({
+        role: m && m.role === 'user' ? 'user' : 'ai',
+        text: String(m && m.text != null ? m.text : '').slice(0,12000)
+      }));
+      const firstUser = messages.find(m=>m.role === 'user');
+      const title = String(firstUser ? firstUser.text : 'New conversation').slice(0,200);
+      const createdAt = cloudCreatedAt[id] || Date.now();
+      const data = {title, messages, createdAt, updatedAt: Date.now()};
+      try{
+        await setDoc(doc(db,'users',cloudUid,'conversations',id),data);
+        cloudCreatedAt[id] = createdAt;
+      }catch(error){
+        console.error('IbomNova cloud chat save failed:',error);
+        if(window.toast) window.toast('Cloud save failed. Your chat is still saved on this device.');
+      }
+    }
+  },900);
+};
+window.deleteIbomCloudChat = async function(id){
+  if(!cloudUid || !auth.currentUser || auth.currentUser.uid !== cloudUid) return;
+  try{await deleteDoc(doc(db,'users',cloudUid,'conversations',id));delete cloudCreatedAt[id];}
+  catch(error){console.error('IbomNova cloud chat delete failed:',error);if(window.toast)window.toast('Could not delete the cloud copy.');}
+};
+async function loadIbomCloudChats(user){
+  cloudUid = user.uid;
+  const snapshot = await getDocs(collection(db,'users',user.uid,'conversations'));
+  const remote = {};
+  snapshot.forEach(item=>{
+    const data = item.data();
+    remote[item.id] = Array.isArray(data.messages) ? data.messages : [];
+    cloudCreatedAt[item.id] = data.createdAt || Date.now();
+  });
+  // Keep the old device-only history as a local backup; do not upload unowned legacy chats.
+  try{
+    if(!localStorage.getItem('ibom_cloud_legacy_backup_done')){
+      const legacy = localStorage.getItem('ibom_chats');
+      if(legacy) localStorage.setItem('ibom_chats_legacy_backup',legacy);
+      localStorage.setItem('ibom_cloud_legacy_backup_done','1');
+    }
+  }catch(e){}
+  if(window.replaceIbomChatsFromCloud) window.replaceIbomChatsFromCloud(remote);
+}
 // Remove old browser-only password records; Firebase accounts and saved chats/profile data are unaffected.
 try{localStorage.removeItem('ibom_users');localStorage.removeItem('ibom_current')}catch(e){}
 window.getIbomIdToken = async function(){if(!auth.currentUser) throw new Error('Please sign in again to continue.');return await auth.currentUser.getIdToken();};
@@ -433,12 +489,23 @@ window.logout = async function(){
   if(!confirm('Logout? Your chats and saved workspace data will stay on this device.')) return;
   try{await signOut(auth);}catch(error){toast(error.message);}
 };
-onAuthStateChanged(auth,user=>{
+onAuthStateChanged(auth,async user=>{
   window.currentUser=user?{name:user.displayName||user.email.split('@')[0],email:user.email,uid:user.uid}:null;
   if(user){
-    document.getElementById('landing').style.display='none';
-    showChat(); updateSidebar();
+    try{
+      await loadIbomCloudChats(user);
+      document.getElementById('landing').style.display='none';
+      showChat(); updateSidebar();
+    }catch(error){
+      cloudUid = null;
+      console.error('IbomNova cloud chat load failed:',error);
+      toast('Could not load cloud chats. Your device history remains available.');
+      document.getElementById('landing').style.display='none';
+      showChat(); updateSidebar();
+    }
   }else{
+    cloudUid = null;
+    clearTimeout(cloudSaveTimer);
     document.getElementById('chat').classList.remove('active');
     document.getElementById('landing').style.display='block';
     document.getElementById('sidebar').classList.remove('show');
