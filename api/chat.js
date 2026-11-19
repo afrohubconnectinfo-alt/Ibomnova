@@ -43,7 +43,7 @@ export default async function handler(req, res) {
   }
 
   const authHeader = req.headers.authorization || "";
-  const match = authHeader.match(/^Bearer\\s+(.+)$/i);
+  const match = authHeader.match(/^Bearer\s+(.+)$/i);
   if (!match) return res.status(401).json({ error: "Please sign in to use IbomNova AI." });
 
   let uid;
