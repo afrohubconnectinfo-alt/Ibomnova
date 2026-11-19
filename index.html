@@ -170,7 +170,7 @@ body.light .proof{background:#eee}
 </div></div>
 <div class="attach-pop" id="attachPop" onclick="if(event.target===this)closeAttach()"><div class="attach-sheet"><div class="attach-top"><b>Share something ✨</b><button onclick="closeAttach()">✕</button></div><div class="attach-grid"><div class="new-project" onclick="showProjectTypes()"><div style="width:44px;height:44px;background:rgba(255,255,255,.25);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px">+</div><div><b>✨ New Project</b><br><small>Create a good project with IbomNova AI</small></div></div><div class="right-grid"><div class="opt" onclick="pickGallery()"><div>🖼️</div><span>Gallery</span><small>Photos & videos</small></div><div class="opt" onclick="pickFile()"><div>📄</div><span>File</span><small>PDF, Doc, Zip</small></div></div></div><div class="project-types" id="projectTypes"><button onclick="createProject('Business')">💼 Business Plan</button><button onclick="createProject('Portfolio Website')">🌐 Portfolio Website</button><button onclick="createProject('CV / Resume')">📄 CV / Resume</button><button onclick="createProject('School Assignment')">🎓 School Assignment</button></div><input type="file" id="fileInput" hidden onchange="filePicked(this)"><input type="file" id="galleryInput" accept="image/*,video/*" hidden onchange="filePicked(this)"></div></div>
 <div class="modal" id="authModal"><div class="box"><h2 id="authTitle">Create Account</h2><input id="aName" placeholder="Your full name"><input id="aEmail" placeholder="Email"><input id="aPass" type="password" placeholder="Password (min 4)"><button onclick="doAuth()">Continue →</button><p style="text-align:center;font-size:13px;margin-top:10px"><span id="switchText"></span></p><button onclick="closeAuth()" class="ghost">Cancel</button></div></div>
-<div class="modal" id="profileModal"><div class="box"><h2>👤 My Profile</h2><img id="profAvatar" class="avatar-big" src="https://via.placeholder.com/100?text=👤"><div style="display:flex;gap:8px"><button onclick="document.getElementById('avatarInput').click()">📷 Change Picture</button><button onclick="removeAvatar()" class="ghost">🗑️ Remove</button></div><input type="file" id="avatarInput" accept="image/*" hidden onchange="changeAvatar(this)"><label>Full Name</label><input id="profName" placeholder="Your name"><label>Bio</label><textarea id="profBio" rows="2"></textarea><label>Email</label><input id="profEmail" disabled style="background:#f0f0f0"><div style="background:#fff3e6;padding:12px;border-radius:12px;margin:8px 0;font-size:14px">📊 <b id="projCount">0 Projects Done</b> • <span id="profPts">120 Nova Points</span><br><span id="profLevel">Level: Beginner</span><div class="prog"><div id="profBar"></div></div></div><label>Reset Password</label><input id="oldPass" type="password" placeholder="Old password"><input id="newPass" type="password" placeholder="New password"><button onclick="resetPassword()">🔐 Reset Password</button><button onclick="saveProfile()">💾 Save Profile</button><button onclick="closeModal('profileModal')" class="ghost">Close</button></div></div>
+<div class="modal" id="profileModal"><div class="box"><h2>👤 My Profile</h2><img id="profAvatar" class="avatar-big" src="https://via.placeholder.com/100?text=👤"><div style="display:flex;gap:8px"><button onclick="document.getElementById('avatarInput').click()">📷 Change Picture</button><button onclick="removeAvatar()" class="ghost">🗑️ Remove</button></div><input type="file" id="avatarInput" accept="image/*" hidden onchange="changeAvatar(this)"><label>Full Name</label><input id="profName" placeholder="Your name"><label>Bio</label><textarea id="profBio" rows="2"></textarea><label>Email</label><input id="profEmail" disabled style="background:#f0f0f0"><div style="background:#fff3e6;padding:12px;border-radius:12px;margin:8px 0;font-size:14px">📊 <b id="projCount">0 Projects Done</b> • <span id="profPts">120 Nova Points</span><br><span id="profLevel">Level: Beginner</span><div class="prog"><div id="profBar"></div></div></div><label>Password</label><p style="font-size:13px;line-height:1.5;color:#999">For your security, we will email you a secure link to change your password.</p><button onclick="resetPassword()">✉️ Email me a password reset link</button><button onclick="saveProfile()">💾 Save Profile</button><button onclick="closeModal('profileModal')" class="ghost">Close</button></div></div>
 <div class="modal" id="notifModal"><div class="box"><h2>🔔 Notifications</h2><button onclick="markAllRead()" class="ghost">Mark all as read</button><div id="notifList"></div><button onclick="closeModal('notifModal')" class="ghost">Close</button></div></div>
 <div class="modal" id="walletModal"><div class="box"><h2>💰 My Wallet</h2><div style="background:#0f3d1e;color:#fff;padding:16px;border-radius:14px;text-align:center"><small>Balance</small><h1 id="walletBal">₦1,000</h1><small id="walletPlan">Plan: Free</small></div><button onclick="fundWallet()">+ Fund Wallet</button><h3 style="margin-top:14px">Subscription Plans</h3><div class="plan"><b>Free - ₦0</b><p>Limited chats, basic AI</p><button onclick="buyPlan('Free',0)">Current Plan</button></div><div class="plan"><b>⭐ Pro - ₦5,000 / month</b><p>Unlimited chats, faster AI, projects</p><button onclick="buyPlan('Pro',5000)">Subscribe Pro</button></div><div class="plan"><b>💎 Premium - ₦10,000 / month</b><p>Everything + Image generation</p><button onclick="buyPlan('Premium',10000)">Subscribe Premium</button></div><h4>History</h4><div id="txList" style="font-size:13px"></div><button onclick="closeModal('walletModal')" class="ghost">Close</button></div></div>
 <div class="modal" id="settingsModal"><div class="box"><h2>⚙️ Settings</h2><button onclick="toggleTheme()">🌙 / ☀️ Toggle Dark / Light Mode - <span id="themeLabel">Dark</span></button><label>Your Name</label><input id="setName"><label>Phone Number</label><input id="setPhone" placeholder="+234..."><button onclick="saveSettings()">Save Settings</button><button onclick="closeModal('settingsModal')" class="ghost">Close</button></div></div>
@@ -379,13 +379,40 @@ if(currentUser){document.getElementById('landing').style.display='none';document
 </script>
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile, sendPasswordResetEmail, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 const firebaseConfig = { apiKey: "AIzaSyCIjfg0XnJNlDnutG-8z0hzOH2Pun3Odog", authDomain: "ibomnova.firebaseapp.com", projectId: "ibomnova", storageBucket: "ibomnova.firebasestorage.app", messagingSenderId: "271815396164", appId: "1:271815396164:web:0d6b220c5881b984192511" };
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 // Remove old browser-only password records; Firebase accounts and saved chats/profile data are unaffected.
 try{localStorage.removeItem('ibom_users');localStorage.removeItem('ibom_current')}catch(e){}
 window.getIbomIdToken = async function(){if(!auth.currentUser) throw new Error('Please sign in again to continue.');return await auth.currentUser.getIdToken();};
+window.saveProfile = async function(){
+  if(!auth.currentUser){toast('Please log in again.');return;}
+  const name=document.getElementById('profName').value.trim();
+  try{
+    if(name) await updateProfile(auth.currentUser,{displayName:name});
+    window.currentUser={name:auth.currentUser.displayName||auth.currentUser.email.split('@')[0],email:auth.currentUser.email,uid:auth.currentUser.uid};
+    profile.bio=document.getElementById('profBio').value;
+    safeSet('ibom_profile',{bio:profile.bio,avatar:'',phone:profile.phone,points:profile.points,streak:profile.streak});
+    updateSidebar(); toast('Profile saved to your account.'); closeModal('profileModal');
+  }catch(error){toast('Could not save profile. Please try again.');}
+};
+window.saveSettings = async function(){
+  if(!auth.currentUser){toast('Please log in again.');return;}
+  const name=document.getElementById('setName').value.trim();
+  try{
+    if(name) await updateProfile(auth.currentUser,{displayName:name});
+    window.currentUser={name:auth.currentUser.displayName||auth.currentUser.email.split('@')[0],email:auth.currentUser.email,uid:auth.currentUser.uid};
+    profile.phone=document.getElementById('setPhone').value.trim();
+    safeSet('ibom_profile',{bio:profile.bio,avatar:'',phone:profile.phone,points:profile.points,streak:profile.streak});
+    updateSidebar(); toast('Settings saved to this device and your account.'); closeModal('settingsModal');
+  }catch(error){toast('Could not save settings. Please try again.');}
+};
+window.resetPassword = async function(){
+  if(!auth.currentUser){toast('Please log in again.');return;}
+  try{await sendPasswordResetEmail(auth,auth.currentUser.email);toast('Password reset link sent to '+auth.currentUser.email+'. Check your inbox.');}
+  catch(error){toast('Could not send reset email. Please try again later.');}
+};
 window.doAuth = async function(){
   const name=document.getElementById('aName').value.trim();
   const email=document.getElementById('aEmail').value.trim();
